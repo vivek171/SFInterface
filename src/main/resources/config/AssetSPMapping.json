@@ -1,0 +1,9 @@
+{
+  "SPMapping" : {
+    "AssetsByLocation" : "CALL API_AssetsByLocation('{{AssetID}}','{{LocationID}}','{{UserID}}')",
+    "AssetsPurchaseDetails" : "CALL API_AssetsPurchaseDetails('{{AssetID}}','{{OrganizationID}}','{{UserID}}')",
+    "AssetsLastTransfer" : "CALL API_AssetsLastTransfer('{{AssetID}}','{{UserID}}','{{FromLocationID}}','{{ToLocationID}}')",
+    "AssetsByUsers" : "CALL API_AssetsByUsers('{{AssetID}}','{{AssetType}}','{{UserID}}')",
+    "AssetDetails": "CALL AssetDetails('{{Asset}}')"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "SR:ServiceRequest": "SR",
+  "PT:ProblemTicket": "PT",
+  "SR:Task": "SRT",
+  "ONCALL_CREATE_REQUIRED_FIELD": [
+    "StartDate",
+    "Account",
+    "User"
+  ],
+  "ONCALL_UPDATE_REQUIRED_FIELD": [
+    "Oncallsk"
+  ],
+  "CONSOLIDATED_TICKET_DEFAULT_STATUS": [
+    "ASD",
+    "ACK",
+    "P"
+  ],
+  "CONSOLIDATED_TICKET_DEFAULT_BUSINESSFUNCTION": [
+    "INCIDENTS",
+    "SR",
+    "SRT",
+    "CR"
+  ],
+  "CONSOLIDATED_TICKET_FULLTEXT_SEARCH_FIELDS": [
+    "Ticket",
+    "Ticket_sk",
+    "AlertStatusName",
+    "BusinessFunction",
+    "AssignedIndividualLoginID",
+    "AssignedGroupName",
+    "Building",
+    "Category",
+    "AccountCode",
+    "CreatedOn",
+    "RaisedEmailAddress",
+    "RaisedFirstName",
+    "RaisedLastName",
+    "ModifiedOn",
+    "ModifiedFullName",
+    "RaisedNetworkLogin",
+    "PendingReason",
+    "PendingTime",
+    "RaisedFullName",
+    "Department",
+    "Item",
+    "PriorityName",
+    "StatusDescription",
+    "Summary",
+    "Type",
+    "BusinessFunctionCode",
+    "RaisedLoginID",
+    "StatusCode"
+  ]
+}
+
+

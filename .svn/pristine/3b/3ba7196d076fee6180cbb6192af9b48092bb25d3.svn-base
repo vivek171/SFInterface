@@ -1,0 +1,501 @@
+Release Version: 1.01.01
+SFInterfaceCodeRevision:- 22720
+                Common to All:
+
+Common API’s
+1.	LoginDetails API:-
+a.	Added department_sk,building_sk,floor_sk,suite_sk Account,MasterAccount ..
+b.	URL:- http://10.165.135.81:8080/SFInterface/v1/me
+Admin API’s
+2.	Menus API:-
+a.	Fixed repeated entries of same objectcode with multiple permissions
+3.	Dependency update indexer:-
+a.	To update dependency indexer of ObjectPermissions when updating Objects API
+----------------------------------------------------------------------------------
+Release Notes
+Release Version: 1.00.078
+SFInterfaceCodeRevision:- 22413
+                Common to All:
+
+Admin Screen API’s
+1.	UpdateEntityLinks API:-
+a.	To update entity links based on linkname and account_sk
+2.	CreateDMartAccount API:-
+a.	To create account in reporting database.
+---------------------------------------------------------------------------------
+Release Notes
+Release Version: 1.00.077
+SFInterfaceCodeRevision:- 22389
+                Common to All:
+
+Admin Screen API’s:-
+1.         UpdateCRLocations API:-
+a.         (SP Name)    API_UpdateCRLocations
+2.         UpdateAlertAccountRel  API   -
+a.         (SP Name)  API_UpdateAlertAccountRel
+3.         UpdateContactType   API     -
+a.(SP Name)    API_UpdateContactType
+4.         UpdateObjects  API          -
+a.(SP Name)    API_UpdateObjects
+5.         UpdateKBTypeAHeadCategories API    -
+a. (SP Name) API_UpdateKBTypeAHeadCategories
+6.         UpdateAssetCategory  API          -
+a.API_UpdateAssetCategory
+7.         UpdateAssetAttachment   API     -
+a.API_UpdateAssetAttachment
+8.         UpdateAssetProcurement    API    -
+a. API_UpdateAssetProcurement
+9.         UpdateAssetProcurementDetails API –
+a.API_UpdateAssetProcurementDetails
+10.        UpdateCRCABMembers  API          -
+a. API_UpdateCRCABMembers
+11.        UpdateCRRequestType API -
+a. API_UpdateCRRequestType
+12.        UpdateCRMileStone  API -
+a. API_UpdateCRMileStone
+13.        UpdateCRProject  API -
+a.API_UpdateCRProject
+14.        UpdateSLMAgreementType  API -
+a. API_UpdateSLMAgreementType
+15.        UpdateOPSBOTAlerts API -
+a.API_UpdateOPSBOTAlerts
+16.        UpdateSLMDefinition API    -
+a. API_UpdateSLMDefinition
+17.        UpdateEntity API  -
+a.API_UpdateEntity
+18.        UpdateEntityLink API   -
+a.API_UpdateEntityLink
+19.        UpdateLinks API -
+a.API_UpdateLinks
+20.        Entity API –
+a.API_EntitySearch
+21.        Links API –
+a.API_LinksSearch
+
+Added Auto Code Generation for
+1. UpdateChangeType  API -
+a.(SP Name)    API_UpdateChangeType
+2. UpdateCRCategory  API -
+a.(SP Name)    API_UpdateCRCategory
+3. UpdateCRSystems API  -
+a.(SP Name)    API_UpdateCRSystems
+4. UpdatePlatforms  API-
+a.(SP Name)    API_UpdatePlatforms
+5. UpdateRiskLevel API -
+a.(SP Name)    API_UpdateRiskLevel
+6. UpdateTaskType  API          -
+a.(SP Name) API_UpdateTaskType
+7. UpdateApprovalType API       -
+a.(SP Name) API_UpdateApprovalType
+8. UpdateBusinessOrganization – API
+a.(SP Name) API_UpdateBusinessOrganization
+9. UpdateDesignation        -
+a.(SP Name) API_UpdateDesignation
+10.UpdateVendor                -
+a.(SP Name) API_UpdateVendor
+11.UpdateAccountRole        -
+a.(SP Name) API_UpdateAccountRole
+12.UpdateGEOCity            -
+a.(SP Name) API_UpdateGEOCity
+13.UpdateGEOCountry            -
+a.(SP Name) API_UpdateGEOCountry
+14.UpdateGEOState            -
+a.(SP Name) API_UpdateGEOState
+
+ADFS Authentication :-
+i)	ADFS Navigation:- http://10.165.135.81:8080/SFInterface/adfs/CTS
+ii)	ADFS callback URL:-http://10.165.135.81:8080/SFInterface/adfs/callback
+--------------------------------------------------------------------------------------------
+Release Notes
+Release Version: 1.00.039           
+SFInterface CodeRevision:- 21953
+
+Common to All:
+	1.	AdvancedTicketsSearch API:-
+a.	Optimized the query performance
+b.	SPName:- API_AdvancedTicketSearch
+2.	IncidentManagerHistory API:-
+a.	To populate enddate from next startdate for the account’s problemManager
+b.	TriggerName:-TRG_FDN_ProblemManager
+
+	3.	Pagination implemented for below API’s
+		a. 	INCAttachments API:-
+			i)	SPName:- API_INCAttachmentSearch
+b.	INCHistory API:-
+	i)	SPName:- API_INCHistorySearch
+c.	INCWorkNotes API:-
+	i)	SPName:- API_INCWorknotesSearch
+d.	SRHistory API:-
+	i)	SPName:- API_SRHistorySearch
+------------------------------------------------------------------------------------------
+Release Notes
+Release Version: 1.00.038
+SFInterface CodeRevision:- 21945
+
+Common to All:
+    	1. 	UpdateServiceRequest,UpdateIncident,UpdateSRTask API fix
+		a.modified the internal json sent to workflow for initiating.
+2.	Datamart API changes for Status:-
+a. status change from Discard to Void
+b. SPName:- USP_CreatePT, USP_CreateSR, USP_UpdateConsolidatedList, USP_UpdatePT, USP_UpdateSR
+------------------------------------------------------------------------------------------
+Release Notes
+Release Version: 1.00.037
+SFInterface CodeRevision:- 21937
+
+Common to All:
+    1.	SupportUser1 API-
+        i.	To fetch SupportUser along with ProblemManger or not
+    2.	Added Admin Screen API's:-
+        i.  AccountGroups
+        ii. Building
+        iii.CTI
+        iv. Department
+        v.    ListOfValues
+        vi.    PendingReason
+    3.	Pagination Added for belo API:-
+        a.    Floor
+        b.    Item
+        c.    Suite
+        d.    Type
+        e.    Platform
+        f.    Building
+        g.    Department
+        h.    ListOfValues
+------------------------------------------------------------------------------------------
+Release Notes
+Release Version: 1.00.036
+SFInterface CodeRevision:- 21916
+
+Common to All:
+1.	AdvancedTicketSearch API-
+i.	To fetch incident/SR tickets with all the status
+ii.	SPName:- API_AdvancedTicketSearch
+2.	Status code(Discard to Void)  changes in DataMart API:-
+i.	SPName:- USP_UpdateSR
+ii.	SPName:-	USP_UpdatePT
+iii.	SPName:- USP_UpdateConsolidatedList
+iv.	SPName:- USP_CreateSR
+v.	SPName:- USP_CreatePT
+3.	GenerateTicketNumber API:-
+i.	Added ACP1 account’s ticket number generation sequence
+ii.	SPName:-API_GETNEXTNUMBER_ACP1
+------------------------------------------------------------------------------------------
+Version : 1.00.035 ; Date - Dec 24,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.035
+SFInterface CodeRevision:- 21904
+
+Common to All:
+1. In Consolidatedtickets API – problemmanagersk will accept multiple inputs.
+2. Removed CurrentFEM fetch API from code. SP - API_FEMMessages
+
+------------------------------------------------------------------------------------------
+
+Version : 1.00.034 ; Date - Dec 24,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.034
+SFInterface CodeRevision:- 21897
+
+Common to All:
+1. CreateIncidentManager API – Changed Account parameter to accept multiple accounts as input. SP: API_CreateIncientManager
+2. CurrentFEM API –
+a. Account parameter will accept multiple accounts as input
+b. Support both GET and Post method
+c. Added CreatedBy and CreatedByName in API response
+d. SP – API_FEMMessages
+3. ConsolidatedTickets API –
+a. If API gets IncidentManager_sk as input, Get list of Accounts for that given IncidentManager_sk from FDN_problemManager Table and fetch tickets assigned to CTS 1st level group in those accounts.
+
+------------------------------------------------------------------------------------------
+
+Version : 1.00.033 ; Date - Dec 19,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.033
+SFInterface CodeRevision:- 21881
+
+Common to All:
+1.	ObjectPermissions1 API-
+i.	Added ParentObjectCode default value in response.
+2.	Added support for pagination in below API:-
+i.	 AccountRole API:-
+1.	SPName - API_AccountRoleSearch
+ii.	ApprovalType –
+1.	SPName:- API_ApprovalTypeSearch
+iii.	BusinessOrganization –
+1.	SPName:- API_BusinessOrganizationSearch
+iv.	Category –
+1.	SPName:- API_CategorySearch
+v.	ChangeType –
+1.	SPName:-API_ChangeTypeSearch
+3.	Support3 API:-
+i.	SPName:- API_SupportAttachmentSearch
+4.	UpdateCR API:-
+i.	StatusCode Change from Inprogress to InProgress.
+----------------------------------------------------------------------------------
+Version : 1.00.032 ; Date - Dec 19,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.032
+SFInterface CodeRevision:- 21869
+
+Common to All:
+1.	CreateIncidentManager API:-
+a.	To add APP-INCIDENT-MGR group to the user.
+b.	SPName:- API_CreateIncidentManager
+2.	CreateNotification API:-
+a.	Added MessageRead flag to change the status of unread message to read.
+b.	SPName:- API_CreateNotification
+3.	IncidentManagerHistory API:-
+a.	to fetch all IncidentMangers.
+b.	SPName:- API_IncidentManagerHistorySearch
+4.	ObjectPermissions1 API:-
+a.	 to support both POST and GET method.
+----------------------------------------------------------------------------------
+Version : 1.00.031 ; Date - Dec 18,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.031
+SFInterface CodeRevision:- 21861
+
+Common to All:
+1.	UpdateIncidentManager API :-
+a.	To add IncidentManger group for the user in SEC_ACCGROUPUSER table
+b.	SPName:- API_UpdateIncidentManager, API_FEMMessages
+----------------------------------------------------------------------------------
+Version : 1.00.030 ; Date - Dec 16,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.030
+SFInterface CodeRevision:- 21846
+
+Common to All:
+1.	CreateNotification API :-
+a.	To support AlertCode in create/update
+b.	SPName:- API_CreateNotification
+2.	CurrentFEM API:-
+a.	SPName:- API_FEMMessages
+b.	Date Format changed to UTC
+3.	OPSBOTAlerts API:-
+a.	Template column modified
+b.	SPName:- API_OPSBOTAlerts
+4.	UpdateSupport API:-
+a.	SecondaryLevel User Update issue fix
+b.	SPName:- API_UpdateSupport
+5.	UpdateUserNotes API:-
+a.	To inactivate the old published message and publish the new one.
+b.	SPName:-API_UpdateUserNotes
+6.	Support API:-
+a.	Support API column Account_sk fix.
+7.	Objects API:-
+a.	TO fetch Objects
+b.	SPName:- API_Objects
+c.	http://10.165.135.81:8080/SFInterface/V1/Objects?Account=CTS&ParentObjectCode=NULL&SelectedFields=ObjectCode,ParentObjectCode
+----------------------------------------------------------------------------------
+Version : 1.00.029 ; Date - Dec 15,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.029
+SFInterface CodeRevision:- No Code changes
+
+Common to All:
+
+                1.CreateNotification API:-
+                                a. added parameter for alertcode.
+                                b. SPName:- API_CreateNotification
+                                c.Lucene script for CreateNotification needs to be ran
+----------------------------------------------------------------------------------
+Version : 1.00.028 ; Date - Dec 14,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.028
+SFInterface CodeRevision:- 21836
+
+Common to All:
+
+                1.Asset API
+                                a.To fetch Assetdetails
+b. http://10.165.135.81:8080/SFInterface/Assets/V1/AssetDetails?Asset=192.168.5.12 (To fetch Asset by IP Address)
+c. http://10.165.135.81:8080/SFInterface/Assets/V1/AssetDetails?Asset=INCEXCAS1 (To fetch Asset by name)
+
+                2.UpdateProfile API:-
+                                a. Modified Queue field to Queue_sk
+b. SPName:- API_UpdateProfile
+
+                3.Notification API:-
+                                a. To support Multiple AlertCode
+                                b. SPName:- API_NotificationSearch
+----------------------------------------------------------------------------------
+Version : 1.00.027 ; Date - Dec 9,2020 ; BY Gayathri Ashok
+Release Notes
+Release Version: 1.00.027
+SFInterface CodeRevision:- 21826
+
+Common to All:
+       1. IncidentManagerHistory API:-
+a.To support Multiple Account,Account_sk and User_sk
+b. SPName:- API_IncidentManagerHistorySearch
+
+	2. CreateProfile API–
+a. Fixed ProfileSearch indexer update issue.
+
+3. ObjectPermissions1 API
+	a. Fix defaultJson value for empty records
+
+4. IndexerUpdate for Designation,Priority,Vendor in Update API’s has been added
+
+5. WhiteListed Suite,Floor and City API
+
+6. CurrentFEM API:-
+	a. CurrentFEM to fetch both active and inactive records.
+	b. SPName:- API_FEMMessages
+7. FEMHistory API:-
+	a. to added all variable in response
+	b. SPName:- API_FEMMessagesHistorySearch
+8. GenerateTicketNumber API:-
+	a.Added BHMC account
+	b.SPName:- API_GETNEXTNUMBER_BHMC
+
+9. Notification API:-
+	a. to fetch unread notification of user.
+	b. SPName:- API_NotificationSearch
+
+10. Floor && Suite API:-
+	a.SPName:- API_FloorSearch, API_SuiteSearch, API_UpdateDepartment
+----------------------------------------------------------------------------------
+Version : 1.00.026 ; Date - Dec 9,2020 ; BY Gayathri Ashok
+Release Version: 1.00.026
+SFInterface CodeRevision:- 21803
+Common to All:
+	    1. Floor API:-
+            a.To fetch Floor Records
+            b.SPName:- API_FloorSearch
+    	2. Suite API:-
+    		a.To Fetch Suite Records
+    		b.SPName:- API_SuiteSearch
+    	3. Item API:-
+    		a. Added Status and StatusCode fields
+    		b.SPName:-   API_ItemSearch
+    	4. Approval API:-
+    		a.Added AccountCodeName
+    		b.SPName:- API_ApprovalTypeSearch
+    	5. ServiceRequestDetails API:-
+    		a.Approval Status has been added for All the status
+    		b.SPName:- API_SRSearch
+    	6. FEMHistory API:-
+    		a.to fetch fem history by account_sk/objectcode
+    		b.SPName:- API_FEMMessagesHistorySearch
+    	7. UpdateLovName API:-
+    		a.To update LOVName
+    		b.SPName:-API_UpdateLOVName
+        8. Designation API
+            a. Added DesignationCode
+        9. Vendor API –
+            a. Added AccountCodeName
+        10. Department API
+            a. Added BuildingCode, Building, Status_sk, BusOrg_sk, BusOrgCode,BusinessOrganization and Approver_sk.
+	    11. Inactivated MasterAccount && UserSupportGroupsCount API’s.
+----------------------------------------------------------------------------------
+Version : 1.00.025 ; Date - Dec 7,2020 ; BY Gayathri Ashok
+Purpose -  Common to All:
+           1.ObjectPermissions API:-
+           a. to return all ObjectCode for given ObjectType with 0 status if user is not associated
+           2.ConsolidatedTickets API:-
+           a.to support multiple incidentManager and AssignedIndividual and Submitter
+           3.AgentsByIncidentManager API:-
+           		a.to fetch all agents irrespective of account.
+           		b. SPName:- API_AgentsByIncidentManagerSearch
+           4.ProblemManager API:-
+           		a.to fetch all IncidentManager irrespective of account.
+----------------------------------------------------------------------------------
+Version : 1.00.024 ; Date - Dec 5,2020 ; BY Gayathri Ashok
+Purpose -  1.	Pagination support for Support2, Support3 and UserSearch APIs.
+           a.	Pagination Details added in response headers
+           b.	SPName:- API_UserSearch
+           2.	ServiceRequestDetails and SRTaskDetails search - Added ApproverComments, ApprovalStatusCode and ApprovalStatus.
+           a.	SPName:- API_SRSearch,API_SRTaskSearch
+----------------------------------------------------------------------------------
+Version : 1.00.023 ; Date - Dec 3,2020 ; BY Gayathri Ashok
+Purpose -  Release Version: 1.00.023
+           Common to All:
+           1.	ProblemManager Indexer Update added.
+           2.	ConsolidatedTickets to support Submitter_sk as filter.
+----------------------------------------------------------------------------------
+Version : 1.00.022 ; Date - Dec 3,2020 ; BY Gayathri Ashok
+Purpose -  Added RootCause in IncidentDetails and ServiceRequestDetails fetch APIs
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.021 ; Date - Dec 3,2020 ; BY Gayathri Ashok
+Purpose -  Implemented Pagination for whoosh APIs. Released IncidentManager APIs for fetch and Update.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.020 ; Date - Dec 3,2020 ; BY Gayathri Ashok
+Purpose -  UserPreference api to support get method.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.019 ; Date - Dec 1,2020 ; BY Gayathri Ashok
+Purpose -  Added log for SFI request and response to capture the endpointname,user and the time-delay.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.018 ; Date - Nov 30,2020 ; BY Gayathri Ashok
+Purpose -  Added RootCause and SRApproval related fields in INC and SR APIs.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.017 ; Date - Nov 27,2020 ; BY Gayathri Ashok
+Purpose -  Created new APIs for ArticleReadyMapping.
+Updated UpdateProblemManager,OPSBotAlerts,Questions1,UserPreference
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.016 ; Date - Nov 26,2020 ; BY Gayathri Ashok
+Purpose -  Created new APIs for Master screen and  formatted fields in Datamart APIs.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.015 ; Date - Nov 18,2020 ; BY Gayathri Ashok
+Purpose - Reverted API changes for AccountGroup1 and ConsolidtedTickets
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.014 ; Date - Nov 18,2020 ; BY Gayathri Ashok
+Purpose - Created new APIs  AgentsByIncidentManager and AccountTypes endpoint.CurrentIncidentManager,KBDetails endpoint
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.013 ; Date - Nov 12,2020 ; BY Vivek
+Purpose - Created new APIs  UpdateChangeType, UpdatePlatforms, UpdateCRCategory and UpdateCRSystems.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.012 ; Date - Nov 4,2020 ; BY Gayathri Ashok
+Purpose - Created new APIs  UpdateChangeType, UpdatePlatforms, UpdateCRCategory and UpdateCRSystems.
+ Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.011 ; Date - Oct 30,2020 ; BY Gayathri Ashok
+Purpose - Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.010 ; Date - Oct 27,2020 ; BY Gayathri Ashok
+Purpose - Handled multiple Account as input parameter in 'AccountGroup1' API, Added RaisedBy and AssignedTo as input parameter
+        in ConsolidatedTickets API and created new API 'IncidentManagers'. Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+
+Version : 1.00.009 ; Date - Oct 26,2020 ; BY Gayathri Ashok
+Purpose - Implemented ObjectPermissions1 API. Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.008 ; Date - Oct 23,2020 ; BY Gayathri Ashok
+Purpose - Added Pagination for custom APIs, Validated Code in Admin Screen APIs,
+           , new API to fetch UserSkillSet and etc.Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.007 ; Date - Oct 21,2020 ; BY Gayathri Ashok
+Purpose - Released UpdateKBArticle API and Implemented error handling.Please refer Release Notes for more details.
+----------------------------------------------------------------------------------
+Version : 1.00.006 ; Date - Oct 19,2020 ; BY Gayathri Ashok
+Purpose - Please refer Release notes.
+----------------------------------------------------------------------------------
+Version : 1.00.005 ; Date - Oct 16,2020 ; BY Gayathri Ashok
+Purpose - Please refer Release notes.
+----------------------------------------------------------------------------------
+Version : 1.00.004 ; Date - Oct 15,2020 ; BY Gayathri Ashok
+Purpose - Please refer Release notes
+---------------------------------------------------------------------------------
+Version : 1.00.003 ; Date - Oct 13,2020 ; BY Gayathri Ashok
+Purpose - Released Master Screen APIs, FEM related APIs and some enhancements.
+----------------------------------------------------------------------------------
+Version : 1.00.002 ; Date - Oct 12,2020 ; BY Gayathri Ashok
+Purpose - Released Asset APIs, Master Screen APIs and Some enhancements.
+----------------------------------------------------------------------------------
+Version : 1.00.001 ; Date - Oct 9,2020 ; BY Gayathri Ashok
+Purpose - Released CR APIs, Master Screen APIs and Support APIs.
+----------------------------------------------------------------------------------
+
+

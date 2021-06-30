@@ -1,0 +1,51 @@
+package com.htc.remedy.repo;
+
+import com.htc.remedy.domain.LDAPEndPoints;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface LDAPEndpointRepo extends JpaRepository<LDAPEndPoints, Long> {
+
+    public LDAPEndPoints findByEndPointNameAndActiveIsTrue(String endPointName);
+    public LDAPEndPoints findByEndPointName(String endPointName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByEndPointNameAsc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByBaseAsc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByLdapAccounts_ConnNameAsc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByActiveAsc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByEndPointNameDesc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByBaseDesc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByLdapAccounts_ConnNameDesc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findByEndPointNameContainingOrLdapAccounts_ConnNameContainingOrderByActiveDesc(Pageable pageable, String endPointName, String formName);
+
+    List<LDAPEndPoints> findAllByOrderByEndPointNameAsc(Pageable pageable);
+    //List<LDAPEndPoints> findAllByEndPointNameAsc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByBaseAsc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByLdapAccounts_ConnNameAsc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByActiveAsc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByEndPointNameDesc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByBaseDesc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByLdapAccounts_ConnNameDesc(Pageable pageable);
+
+    List<LDAPEndPoints> findAllByOrderByActiveDesc(Pageable pageable);
+
+    int countByEndPointNameContainingOrLdapAccounts_ConnNameContaining(String endPointName,String formName);
+
+}

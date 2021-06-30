@@ -1,0 +1,58 @@
+package com.htc.remedy.config;
+
+
+import com.htc.remedy.domain.JDBCAccounts;
+import com.htc.remedy.repo.JDBCAccountsRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Configuration
+public class JDBCConfiguration {
+
+    @Autowired
+    JDBCAccountsRepo jdbcAccountsRepo;
+
+    @Bean(name = "jdbcAccTemplate")
+    public Map<String, JdbcTemplate> jdbcSFTemplate() {
+        Map<String, JdbcTemplate> JdbcTemplates = new HashMap<>();
+        List<JDBCAccounts> jdbcAccounts = jdbcAccountsRepo.findAllByActiveIsTrue();
+
+        jdbcAccounts.forEach(jdbcAccounts1 -> {
+            try {
+                JdbcTemplate jdbcTemplate = new JdbcTemplate();
+                String hostURL = "";
+                String url = jdbcAccounts1.getDriverclassname().contains("sqlserver")?"jdbc:sqlserver://" : "jdbc:mysql://";
+
+                if (jdbcAccounts1.getDriverclassname().contains("sqlserver")) {
+                    hostURL+=url + jdbcAccounts1.getHost() + ":" + jdbcAccounts1.getPort() + ";databaseName=" + jdbcAccounts1.getDatabaseName();
+                } else {
+                    hostURL+=url + jdbcAccounts1.getHost() + ":" + jdbcAccounts1.getPort() + "/" + jdbcAccounts1.getDatabaseName()+"?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=UTF-8&characterSetResults=UTF-8";
+                }
+
+                jdbcTemplate.setDataSource(
+                        DataSourceBuilder
+                                .create()
+                                .url(hostURL)
+                                .driverClassName(jdbcAccounts1.getDriverclassname())
+                                .username(jdbcAccounts1.getUsername())
+                                .password(jdbcAccounts1.getPassword())
+                                .build());
+
+                JdbcTemplates.put(jdbcAccounts1.getEnvironment(), jdbcTemplate);
+                } catch (Exception e){
+            }
+        });
+        return JdbcTemplates;
+    }
+
+}
+
+
+

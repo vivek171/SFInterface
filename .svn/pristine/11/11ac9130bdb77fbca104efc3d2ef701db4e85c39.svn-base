@@ -1,0 +1,69 @@
+package com.htc.remedy.config;
+
+/**
+ * Created by kvivek on 3/2/2018.
+ */
+/*@Configuration*/
+public class LdapConfiguration1 {
+/*
+
+    @Value("${ctsspi.ldap.truststore}")
+    String truststore;
+
+    @Value("${ctsspi.ldap.trustpassword}")
+    String trustpassword;
+
+    @Autowired
+    LDAPAccountsRepo ldapAccountsRepo;
+
+    @Bean
+    public Map<String, List<LdapTemplate>> ldapTemplate() {
+        Map<String, List<LdapTemplate>> ldapTemplateMap = new HashMap<>();
+        List<LDAPAccounts> ldapAccounts = ldapAccountsRepo.findAllBySsoIsTrue();
+
+        ldapAccounts.stream()
+                .forEach(ldapAccounts1 -> {
+                    LdapContextSource contextSource = new LdapContextSource();
+                    if (ldapAccounts1.getPort() == 636) {
+                        contextSource.setUrl("ldaps://" + ldapAccounts1.getHost() + ":" + ldapAccounts1.getPort());
+                    } else {
+                        contextSource.setUrl("ldap://" + ldapAccounts1.getHost() + ":" + ldapAccounts1.getPort());
+                    }
+
+                    contextSource.setBase(ldapAccounts1.getBase());
+                    contextSource.setUserDn(ldapAccounts1.getUsername());
+                    contextSource.setPassword(ldapAccounts1.getPassword());
+                    Map<String, Object> baseEnvironmentProperties = new HashMap<String, Object>();
+                    baseEnvironmentProperties.put("com.sun.jndi.ldap.read.timeout", "1500");
+                    baseEnvironmentProperties.put("com.sun.jndi.ldap.connect.timeout", "1500");
+                    contextSource.setBaseEnvironmentProperties(baseEnvironmentProperties);
+                    contextSource.afterPropertiesSet();
+                    LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+
+                    try {
+                        ldapTemplate.afterPropertiesSet();
+                        ldapTemplate.setIgnorePartialResultException(true);
+                        if (ldapAccounts1.getPort() == 636) {
+                            System.setProperty("javax.net.ssl.trustStore", truststore);
+                            System.setProperty("javax.net.ssl.trustStorePassword", trustpassword);
+                        }
+                        ldapTemplate.afterPropertiesSet();
+                    } catch (Exception e) {
+                    }
+                    if (ldapTemplateMap.containsKey(ldapAccounts1.getClient())) {
+                        List<LdapTemplate> tempLdapTemplate = ldapTemplateMap.get(ldapAccounts1.getClient());
+                        tempLdapTemplate.add(ldapTemplate);
+                        ldapTemplateMap.put(ldapAccounts1.getClient(), tempLdapTemplate);
+
+                    } else {
+                        List<LdapTemplate> ldapTemplates = new ArrayList<>();
+                        ldapTemplates.add(ldapTemplate);
+                        ldapTemplateMap.put(ldapAccounts1.getClient(), ldapTemplates);
+                    }
+                });
+
+        return ldapTemplateMap;
+    }
+*/
+
+}

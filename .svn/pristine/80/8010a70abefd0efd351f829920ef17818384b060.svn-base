@@ -1,0 +1,164 @@
+package com.htc.remedy.controller;
+
+import com.htc.remedy.base.SFInterfaceBase;
+import com.htc.remedy.base.SFInterfaceConnectionBase;
+import com.htc.remedy.base.SFInterfaceLoggerBase;
+import com.htc.remedy.base.SFInterfaceMessages;
+import com.htc.remedy.model.User;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.saml.saml2.core.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.xml.sax.SAXException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+
+
+@Controller
+@RequestMapping(ADFS_URL)
+class ADFSController {
+
+    @Value("${adfs.login.error.url}")
+    String failedURL;
+
+    @Autowired
+    SFInterfaceMessages sfInterfaceMessages;
+
+    private static final Logger LOGGER = LogManager.getLogger(ADFSController.class);
+
+    @GetMapping(ADFS_ACCOUNT_URL)
+    public String adfsLogin(@PathVariable(ACCOUNT) String account, HttpServletRequest request) {
+        String returnPage = "", endpointName = "adfsURL";
+        User user = new User();
+        try {
+            user = SFInterfaceConnectionBase.fetchRequestInfo(request);
+            SFInterfaceLoggerBase.log(LOGGER, endpointName, request.toString());
+            List<Map<String, Object>> result = SFInterfaceBase.fetchADFSDetails(
+                    account, V1, new String[]{LOGIN_PAGE_URL, ACCOUNT, MASTER_ACCOUNT}, user);
+
+            if (!result.isEmpty()) {
+                returnPage = REDIRECT_URL + result.get(0).get(LOGIN_PAGE_URL).toString();
+            } else {
+                returnPage = SFInterfaceBase.failedURL(failedURL, account, "AUTHENTICATION.ADFS.ACCOUNT.NOT.CONFIGURED");//no adfs configured for this account
+            }
+        } catch (Exception e) {
+            SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("AUTHENTICATION.ERROR.CLIENT_INSTANCE_NOTFOUND"));
+        }
+        return returnPage;
+    }
+
+    @PostMapping(ADFS_CALLBACK_URL)
+    public String adfsCallback(@PathVariable(ACCOUNT) String account,
+                               HttpServletRequest request
+    ) throws IOException, SAXException, ParserConfigurationException, UnmarshallingException, InitializationException {
+        String returnPage = "", endpointName = "adfscallbackURL";
+        List<Map<String, Object>> profileObject = new ArrayList<>();
+        SFInterfaceLoggerBase.log(LOGGER, endpointName, request.toString());
+        User user = new User();
+
+        String samlToken = EMPTY;
+        try {
+            user = SFInterfaceConnectionBase.fetchRequestInfo(request);
+            List<Map<String, Object>> adfsObjects = SFInterfaceBase.fetchADFSDetails(
+                    account, V1, new String[]{LOGIN_PAGE_URL, ACCOUNT, MASTER_ACCOUNT
+                            , SAML_TOKEN_REQUEST_PARAM_NAME
+                            , SAML_STATUS
+                            , CONSUMER_URL}, user);
+            if (adfsObjects.size() == NUM_ONE) {
+                Map<String, Object> adfsObject = adfsObjects.get(0);
+                samlToken = request.getParameter(StringUtils.isNotBlank((String) adfsObject.get(SAML_TOKEN_REQUEST_PARAM_NAME))
+                        ? adfsObject.get(SAML_TOKEN_REQUEST_PARAM_NAME).toString() : EMPTY
+                );
+                if (StringUtils.isNotBlank(samlToken)) {//samlToken found
+
+                    Response response = SFInterfaceBase.fetchSamlResponse(samlToken);
+
+                    if (response.getStatus().getStatusCode().getValue()
+                            .equalsIgnoreCase((String) adfsObject.get(SAML_STATUS))) {
+                        String networkLogin = response.getAssertions().get(0).getSubject().getNameID().getValue();
+              /*      if (true) {
+                        String networkLogin = "joel.paul5";*/
+                        profileObject = SFInterfaceBase.fetchProfileDetails(account, networkLogin, new String[]{USER_SK, ACCOUNT, NETWORK_LOGIN}, user);
+
+                        if (profileObject.size() == NUM_ONE) {
+
+                            profileObject.get(0).get(USER_SK);
+                            OAuth2AccessToken accessToken = null;
+
+                            accessToken = SFInterfaceBase.createaccessToken(
+                                    (String) profileObject.get(0).get(NETWORK_LOGIN)
+                                    , (String) profileObject.get(0).get(USER_SK)
+                                    , (String) profileObject.get(0).get(ACCOUNT), request);
+
+                            String consumerURL = (String) adfsObject.get(CONSUMER_URL);
+                            if (StringUtils.isNotBlank(consumerURL)) {
+                                if (accessToken != null) {
+                                    Map<String, String[]> params = new HashMap<>();
+                                    params.put(REFRESH_TOKEN, new String[]{accessToken.getRefreshToken().getValue()});
+                                    params.put(ACCOUNT, new String[]{account});
+                                    consumerURL = SFInterfaceBase.getDBQuery(consumerURL, params);
+                                    returnPage = REDIRECT_URL + consumerURL;
+                                } else {
+                                    returnPage = SFInterfaceBase.failedURL(failedURL, account, "AUTHENTICATION.CREATE.ACCESS_TOKEN_FAILED");//accesstoken failed or consumer url not found.
+                                }
+                            } else {
+                                returnPage = SFInterfaceBase.failedURL(failedURL, account, "AUTHENTICATION.ADFS.CONSUMER.URL.NOTCONFIGURED");//accesstoken failed or consumer url not found.
+                            }
+                        } else {
+                            returnPage = SFInterfaceBase.failedURL(failedURL, account, sfInterfaceMessages.get("AUTHENTICATION.SUCCESS.PROFILE.NOTFOUND"));//user not found in the system
+                        }
+                    } else {
+                        returnPage = SFInterfaceBase.failedURL(failedURL, account, sfInterfaceMessages.get("AUTHENTICATION.ERROR.SAML.RESPONSE.FAILED"));//failed saml response for user login
+                    }
+                } else {
+                    returnPage = SFInterfaceBase.failedURL(failedURL, account, sfInterfaceMessages.get("AUTHENTICATION.ADFS.SAML.KEY.NOTFOUND"));//saml key not found
+                }
+            } else {
+                returnPage = SFInterfaceBase.failedURL(failedURL, account, "AUTHENTICATION.ADFS.ACCOUNT.NOT.CONFIGURED");//no adfs configured for this account
+            }
+        } catch (Exception e) {
+            SFInterfaceLoggerBase.exception(LOGGER, endpointName, e);
+            returnPage = SFInterfaceBase.failedURL(failedURL, account, sfInterfaceMessages.get("AUTHENTICATION.ERROR.LOGINFAILED"));
+        }
+        return returnPage;
+    }
+
+    @GetMapping(ADFS_ACCOUNT_LOGOUT_URL)
+    public String adfsLogout(@PathVariable(ACCOUNT) String account, HttpServletRequest request) throws Exception {
+        String returnPage = "", endpointName = "adfsURL";
+        SFInterfaceLoggerBase.log(LOGGER, endpointName, request.toString());
+        User user = new User();
+        user = SFInterfaceConnectionBase.fetchRequestInfo(request);
+        List<Map<String, Object>> result = SFInterfaceBase.fetchADFSDetails(
+                account, V1, new String[]{LOGOUT_URL, ACCOUNT, MASTER_ACCOUNT}, user);
+
+        if (!result.isEmpty()) {
+            if (StringUtils.isNotBlank((String) result.get(0).get(LOGOUT_URL))) {
+                returnPage = REDIRECT_URL + result.get(0).get(LOGOUT_URL).toString();
+            } else {
+                returnPage = SFInterfaceBase.adfsLogoutURL(failedURL);//no adfs configured for this account
+            }
+        } else {
+            returnPage = SFInterfaceBase.adfsLogoutURL(failedURL);
+        }
+        return returnPage;
+    }
+}

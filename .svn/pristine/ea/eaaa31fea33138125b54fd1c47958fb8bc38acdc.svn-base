@@ -1,0 +1,147 @@
+package com.htc.remedy.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.lucene.search.Sort;
+
+import java.util.Map;
+
+public class LQLSearch {
+    String query;
+    String[] requiredColumns;
+    String indexerName;
+    String indexerPath;
+    Map<String, String> alias;
+    Integer count;
+    String sortField;
+    String sortOrder;
+    String distinct;
+    String distinctfield;
+    Integer pageno;
+    Boolean likeoperator = false;
+    Boolean pagination;
+    @JsonIgnore
+    Sort sort;
+
+    public LQLSearch() {
+    }
+
+    public Sort getSort() {
+        return sort;
+    }
+
+    public void setSort(Sort sort) {
+        this.sort = sort;
+    }
+
+    public LQLSearch(String query, String[] requiredColumns, String indexerName, Map<String, String> alias, Integer count) {
+        this.query = query;
+        this.requiredColumns = requiredColumns;
+        this.indexerName = indexerName;
+        this.alias = alias;
+        this.count = count;
+    }
+
+    public String getDistinctfield() {
+        return distinctfield;
+    }
+
+    public void setDistinctfield(String distinctfield) {
+        this.distinctfield = distinctfield;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public Map<String, String> getAlias() {
+        return alias;
+    }
+
+    public void setAlias(Map<String, String> alias) {
+        this.alias = alias;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String[] getRequiredColumns() {
+        return requiredColumns;
+    }
+
+    public void setRequiredColumns(String[] requiredColumns) {
+        this.requiredColumns = requiredColumns;
+    }
+
+    public String getIndexerName() {
+        return indexerName;
+    }
+
+    public void setIndexerName(String indexerName) {
+        this.indexerName = indexerName;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public String getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public String getDistinct() {
+        return distinct;
+    }
+
+    public void setDistinct(String distinct) {
+        this.distinct = distinct;
+    }
+
+    public Boolean getLikeoperator() {
+        return likeoperator;
+    }
+
+    public void setLikeoperator(Boolean likeoperator) {
+        this.likeoperator = likeoperator;
+    }
+
+    public Integer getPageno() {
+        return pageno;
+    }
+
+    public void setPageno(Integer pageno) {
+        this.pageno = pageno;
+    }
+
+    public Boolean getPagination() {
+        return pagination;
+    }
+
+    public void setPagination(Boolean pagination) {
+        this.pagination = pagination;
+    }
+
+    public String getIndexerPath() {
+        return indexerPath;
+    }
+
+    public void setIndexerPath(String indexerPath) {
+        this.indexerPath = indexerPath;
+    }
+}

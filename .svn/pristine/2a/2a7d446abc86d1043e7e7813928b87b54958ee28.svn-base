@@ -1,0 +1,103 @@
+package com.htc.remedy.base;
+
+import com.htc.remedy.config.IndexerUtilities;
+import com.htc.remedy.constants.Constants;
+import com.htc.remedy.constants.SFInterfaceConstants;
+import com.htc.remedy.controller.SFInterfaceWhooshController;
+import com.htc.remedy.domain.IndexerDomain;
+import com.htc.remedy.model.IndexWritersModel;
+import com.htc.remedy.model.SFInterfaceIndexerSyncModel;
+import com.htc.remedy.model.User;
+import com.htc.remedy.repo.LucIndexerRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+
+@Component
+public class ActiveMQBase implements BaseModel {
+
+
+    private static
+    SFInterfaceMessages messages;
+
+    Logger logger = LoggerFactory.getLogger(SFInterfaceWhooshController.class);
+
+    @Autowired
+    public ActiveMQBase(SFInterfaceMessages messages) {
+        this.messages = messages;
+    }
+
+    @JmsListener(destination = SFInterfaceConstants.INDEXER_UPDATE)
+    public void indexerUpdate(IndexerDomain indexerDomain) {
+        try {
+            String[] ticketID = indexerDomain.getTicketID();
+            String indexerKey = SFInterfaceBase.checkBlankorEmpty(indexerDomain.getIndexerkey()) ? indexerDomain.getIndexerkey() : "";
+            User user = new User();
+            if (SFInterfaceBase.checkBlankorEmpty(indexerDomain.getClientInstance())) {
+                user.setClientInstance(indexerDomain.getClientInstance());
+            } else {
+                logger.error(messages.get("AUTHENTICATION.ERROR.CLIENT_INSTANCE_NOTFOUND"));
+            }
+            List<IndexerDomain> indexerDomainList = IndexerUtilities.findByNameAndStatussk(SFInterfaceConnectionBase.fetchJdbcTemplatebyType(user, SFInterfaceConstants.getDbRefConnectionName()), indexerDomain.getName());
+            indexerDomain = indexerDomainList.get(NUM_ZERO);
+            indexerKey = SFInterfaceBase.checkBlankorEmpty(indexerKey) ? indexerKey : indexerDomain.getIndexerkey();
+
+            String updatequery = fetchIndexerWhereCondition(indexerDomain.getQuery(), ticketID, indexerKey);
+            indexerDomain.setClientInstance(user.getClientInstance());
+            indexerUpdate(user, indexerDomain, updatequery, ticketID);
+            indexerUpdatewithDependency(indexerDomain.getName(), ticketID);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    @JmsListener(destination = SFInterfaceConstants.INDEXER_SYNC)
+    public void indexerUpdate(SFInterfaceIndexerSyncModel syncModel) {
+        IndexerDomain indexerDomain = new IndexerDomain();
+        indexerDomain.setClientInstance(syncModel.getClientInstance());
+        SFInterfaceBase.syncIndexer(syncModel.getAction(), syncModel.getIndexernames(), syncModel.getTicketids(), indexerDomain);
+    }
+
+
+    public static void indexerUpdatewithDependency(String indexerName, String[] ticketId) {
+        //dependency table indexer update
+    }
+
+    public static String fetchIndexerWhereCondition(String indexerQuery, String[] ticketID, String indexerQueryKeyField) {
+        String ticketIDQuery = Arrays.stream(ticketID)
+                .map(ticketid -> "'" + ticketid + "'")
+                .collect(Collectors.joining(COMMA));
+        if (SFInterfaceBase.checkBlankorEmpty(indexerQuery))
+            return indexerQuery + ESCAPE_CHARACTER_NEWLINE + WHERE + indexerQueryKeyField + " IN ( " + ticketIDQuery + " )";
+        else
+            return null;
+    }
+
+    public void indexerUpdate(User user, IndexerDomain indexerDomain, String updatequery, String[] ticketID) throws Exception {
+        if (indexerDomain != null && SFInterfaceBase.checkBlankorEmpty(indexerDomain.getQuery()) && SFInterfaceBase.checkBlankorEmpty(indexerDomain.getIndexerkeyaliasname())) {
+            try {
+                SFInterfaceBase.updateindexer(SFInterfaceConnectionBase.fetchIndexerWriterModal(user, indexerDomain.getName()).getIndexWriter(), indexerDomain.getName(), updatequery, indexerDomain.getIndexerkeyaliasname(),
+                        SFInterfaceConnectionBase.fetchJdbcTemplatebyType(user, SFInterfaceConstants.getDbRefConnectionName()), ticketID, user);
+                logger.info("Indexer sync:starts");
+                SFInterfaceBase.syncIndexer(SFInterfaceConstants.INDEXER_UPDATE, new String[]{indexerDomain.getName()}, ticketID, indexerDomain);
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+            logger.info(indexerDomain.getName() + ":Updated");
+        }
+    }
+
+}

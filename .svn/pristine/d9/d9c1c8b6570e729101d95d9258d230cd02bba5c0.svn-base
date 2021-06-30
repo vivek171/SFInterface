@@ -1,0 +1,4 @@
+DECLARE @client NVARCHAR(MAX) = '%3$s'
+UPDATE FDN_People_Info
+SET ADPassword = HASHBYTES('SHA2_512', '%2$s')
+WHERE (People_info_sk = '%1$s')

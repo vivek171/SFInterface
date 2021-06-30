@@ -1,0 +1,448 @@
+{
+  "UpdateBuilding": {
+    "tablename": "FDN_Building",
+    "primarykey": "Building_sk",
+    "fields": [
+      "Building",
+      "Account_sk",
+      "CreatedOn",
+      "ModifiedOn",
+      "Status"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "BuildingCode"
+    },
+    "arrayname": "buildings"
+  },
+  "UpdateDepartment": {
+    "tablename": "FDN_Department",
+    "primarykey": "Department_sk",
+    "fields": [
+      "Account_sk",
+      "CreatedOn",
+      "ModifiedOn",
+      "Status"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "DepartmentCode"
+    }
+  },
+  "link_bldcategory": {
+    "tablename": "LINK_BldCategory",
+    "primarykey": "BldCategory_sk",
+    "indexerkey": "BldCategory_sk",
+    "indexername": "BuildingCategory",
+    "fields": [
+      "Account_sk",
+      "Building_sk",
+      "Category_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "buildcategs",
+    "fetchendpointname": "BuildingCategory"
+  },
+  "link_blddept": {
+    "tablename": "LINK_BldDept",
+    "primarykey": "BldDept_sk",
+    "indexerkey": "BldDept_sk",
+    "indexername": "BuildingDepartment",
+    "fields": [
+      "Account_sk",
+      "Building_sk",
+      "Department_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "builddepts",
+    "fetchendpointname": "BuildingDepartment"
+  },
+  "link_bldflr": {
+    "tablename": "LINK_BldFlr",
+    "primarykey": "BldFlr_sk",
+    "indexerkey": "BldFlr_sk",
+    "indexername": "BuildingFloor",
+    "fields": [
+      "Account_sk",
+      "Building_sk",
+      "Floor_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "buildflrs",
+    "fetchendpointname": "BuildingFloor"
+  },
+  "link_deptflr": {
+    "tablename": "LINK_DeptFlr",
+    "primarykey": "DeptFlr_sk",
+    "indexerkey": "DeptFlr_sk",
+    "indexername": "DepartmentFloor",
+    "fields": [
+      "Account_sk",
+      "Department_sk",
+      "Floor_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "deptflrs",
+    "fetchendpointname": "DepartmentFloor"
+  },
+  "link_bldsuite": {
+    "tablename": "LINK_BldSuite",
+    "primarykey": "BldSuite_sk",
+    "indexerkey": "BldSuite_sk",
+    "indexername": "BuildingSuite",
+    "fields": [
+      "Account_sk",
+      "Building_sk",
+      "Suite_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "buildsuites",
+    "fetchendpointname": "BuildingSuite"
+  },
+  "link_deptsuite": {
+    "tablename": "LINK_DeptSuite",
+    "primarykey": "DeptSuite_sk",
+    "indexerkey": "DeptSuite_sk",
+    "indexername": "DepartmentSuite",
+    "fields": [
+      "Account_sk",
+      "Department_sk",
+      "Suite_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "deptsuites",
+    "fetchendpointname": "DepartmentSuite"
+  },
+  "fdn_cti": {
+    "tablename": "FDN_CTI",
+    "primarykey": "CTI_sk",
+    "indexerkey": "CTI_sk",
+    "indexername": "CTI",
+    "fields": [
+      "CTICode",
+      "Category_sk",
+      "Type_sk",
+      "Item_sk",
+      "BusinessFunction_sk",
+      "Account_sk",
+      "Status_sk",
+      "Comments",
+      "Priority_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "ExternalSysID",
+      "FLRPossible"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "arrayname": "ctis",
+    "fetchendpointname": "Admin/CTI"
+  },
+  "objectpermissions": {
+    "tablename": "FDN_ObjectPermissions",
+    "primarykey": "ObjectPermission_sk",
+    "indexerkey": "ObjectPermission_sk",
+    "indexername": "ObjectPermissions",
+    "fields": [
+      "Account_sk",
+      "Object_sk",
+      "AccountGroup_sk",
+      "User_sk",
+      "View",
+      "Add",
+      "Edit",
+      "Delete",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy",
+      "IsMandatory"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "BuildingCode"
+    },
+    "arrayname": "objectpermissions"
+  },
+  "fdn_category": {
+    "tablename": "FDN_Category",
+    "primarykey": "Category_sk",
+    "indexerkey": "Category_sk",
+    "indexername": "Category",
+    "fields": [
+      "CategoryCode",
+      "ParentCategory_sk",
+      "Name",
+      "Account_sk",
+      "Status_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "BusinessFunction_sk"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "CategoryCode"
+    },
+    "arrayname": "categories"
+  },
+  "sec_group": {
+    "tablename": "SEC_Group",
+    "primarykey": "Group_sk",
+    "indexerkey": "Group_sk",
+    "fields": [
+      "GroupCode",
+      "GroupName",
+      "LongGroupName",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "GroupCode"
+    },
+    "arrayname": "groups"
+  },
+  "fdn_approvers": {
+    "tablename": "FDN_Approvers",
+    "primarykey": "Approver_sk",
+    "indexerkey": "Approver_sk",
+    "indexername": "Approvers",
+    "fields": [
+      "ApprovalCriteria_sk",
+      "Level",
+      "Sequence",
+      "AccountGroup_sk",
+      "User_sk",
+      "IsBackUpNeeded",
+      "Status_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "ApproverCount",
+      "From",
+      "Operator"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "CategoryCode"
+    },
+    "arrayname": "approvers"
+  },
+  "fdn_userskillsets": {
+    "tablename": "FDN_UserSkillsets",
+    "primarykey": "UserSkillset_sk",
+    "indexerkey": "UserSkillset_sk",
+    "fields": [
+      "User_sk",
+      "Skillset_sk",
+      "Status",
+      "CreatedBy",
+      "ModifiedBy"
+    ],
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "CategoryCode"
+    },
+    "arrayname": "userskillsets"
+  },
+  "fdn_building": {
+    "tablename": "FDN_Building",
+    "primarykey": "Building_sk",
+    "indexerkey": "Building_sk",
+    "fields": [
+      "BuildingCode",
+      "Account_sk",
+      "Name",
+      "Status_sk",
+      "AddressLine1",
+      "AddressLine2",
+      "Country_sk",
+      "State_sk",
+      "City_sk",
+      "ZipCode",
+      "Phone",
+      "Notes",
+      "CreatedBy",
+      "ModifiedBy",
+      "ExternalSysID",
+      "IsDefault"
+    ],
+    "indexername": "Building",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "BuildingCode"
+    },
+    "arrayname": "buildings"
+  },
+  "fdn_department": {
+    "tablename": "FDN_Department",
+    "primarykey": "Department_sk",
+    "indexerkey": "Department_sk",
+    "fields": [
+      "DepartmentCode",
+      "Name",
+      "Building_sk",
+      "Status_sk",
+      "BusOrg_Sk",
+      "Approver_sk",
+      "RequestedBy",
+      "LocationNote",
+      "InvalidDeptFlag",
+      "CreatedBy",
+      "ModifiedBy",
+      "ExternalSysID",
+      "Account_sk",
+      "IsDefault"
+    ],
+    "indexername": "Department",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "DepartmentCode"
+    },
+    "arrayname": "departments"
+  },
+  "fdn_floor": {
+    "tablename": "FDN_Floor",
+    "primarykey": "Floor_sk",
+    "indexerkey": "Floor_sk",
+    "fields": [
+      "FloorCode",
+      "Name",
+      "Building_sk",
+      "Status_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "ExternalSysID",
+      "Account_sk"
+    ],
+    "indexername": "Floor",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "FloorCode"
+    },
+    "arrayname": "floors"
+  },
+  "fdn_suite": {
+    "tablename": "FDN_Suite",
+    "primarykey": "Suite_sk",
+    "indexerkey": "Suite_sk",
+    "fields": [
+      "SuiteCode",
+      "Name",
+      "Building_sk",
+      "Floor_sk",
+      "Status_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "ExternalSysID",
+      "Account_sk"
+    ],
+    "indexername": "Suite",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "SuiteCode"
+    },
+    "arrayname": "suites"
+  },
+  "fdn_type": {
+    "tablename": "FDN_Type",
+    "primarykey": "Type_sk",
+    "indexerkey": "Type_sk",
+    "fields": [
+      "TypeCode",
+      "Name",
+      "Account_sk",
+      "Status_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "BusinessFunction_sk"
+    ],
+    "indexername": "Type",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "TypeCode"
+    },
+    "arrayname": "types"
+  },
+  "fdn_item": {
+    "tablename": "FDN_Item",
+    "primarykey": "Item_sk",
+    "indexerkey": "Item_sk",
+    "fields": [
+      "ItemCode",
+      "Name",
+      "Account_sk",
+      "Status_sk",
+      "CreatedBy",
+      "ModifiedBy",
+      "BusinessFunction_sk"
+    ],
+    "indexername": "Item",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "ItemCode"
+    },
+    "arrayname": "items"
+  },
+  "sec_accountgroup": {
+    "tablename": "SEC_AccountGroup",
+    "primarykey": "AccountGroup_sk",
+    "indexerkey": "AccountGroup_sk",
+    "fields": [
+      "Account_sk",
+      "Group_sk",
+      "CreatedBy",
+      "Status",
+      "ModifiedBy",
+      "IsNotificationNeeded",
+      "NotifyAddress",
+      "GroupType_sk",
+      "IsTimeSpentRequired",
+      "NotifyReassign",
+      "Size"
+    ],
+    "indexername": "ManageAccountGroup",
+    "createdon": "CreatedOn",
+    "modifiedon": "ModifiedOn",
+    "codegeneration": {
+      "fieldname": "ItemCode"
+    },
+    "arrayname": "accountgroups"
+  }
+}

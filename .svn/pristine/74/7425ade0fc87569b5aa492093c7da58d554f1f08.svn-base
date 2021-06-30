@@ -1,0 +1,43 @@
+package com.htc.remedy.config;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.htc.remedy.model.accountconfig;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.DATASOURCE_JSON_PATH;
+import static com.htc.remedy.constants.SFInterfaceConstants.UTF_8;
+
+@Configuration
+public class DataSourceConfig {
+
+    @Autowired
+    Environment environment;
+
+    @Autowired
+    ResourceLoader resourceLoader;
+
+    @Autowired
+    Gson gson;
+
+    @Bean(name = "jdbcmodel")
+    public List<accountconfig> jdbcConfig() throws IOException {
+        Resource resource = resourceLoader.getResource(DATASOURCE_JSON_PATH);   // fetch endpoints details from refdb
+        String jsonstring = IOUtils.toString(resource.getInputStream(), UTF_8);
+        JsonArray jsonObject = gson.fromJson(jsonstring, JsonObject.class).getAsJsonArray(environment.getActiveProfiles()[0]);
+        accountconfig[] confgList = gson.fromJson(jsonObject, accountconfig[].class);
+        return Arrays.asList(confgList);
+    }
+
+}

@@ -1,0 +1,312 @@
+package com.htc.remedy.controller;
+
+
+import com.google.gson.JsonObject;
+import com.htc.remedy.base.SFInterfaceBase;
+import com.htc.remedy.base.SFInterfaceLoggerBase;
+import com.htc.remedy.base.SFInterfaceMessages;
+import com.htc.remedy.constants.Constants;
+import com.htc.remedy.core.CustomAnalyzer;
+import com.htc.remedy.core.IndexerUtil;
+import com.htc.remedy.domain.IndexerDomain;
+import com.htc.remedy.model.IndexWritersModel;
+import com.htc.remedy.model.SFInterfaceIndexerSyncModel;
+import com.htc.remedy.repo.LucIndexerRepo;
+import com.htc.remedy.services.SFInterfaceServices;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+
+@RestController
+@RequestMapping("/whoosh")
+public class SFInterfaceWhooshController {
+
+    private static final Logger LOGGER = LogManager.getLogger(SFInterfaceWhooshController.class);
+
+    @Autowired
+    IndexerUtil indexerUtil;
+
+    @Value("${app.caretech.search.index-base-path}")
+    String basePath;
+
+    @Autowired
+    LucIndexerRepo lucIndexerRepo;
+
+    @Autowired
+    JmsTemplate jmsTemplate;
+
+    @Autowired
+    @Qualifier(value = "IndexerWriters")
+    Map<String, IndexWritersModel> indexWriters;
+
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    SFInterfaceMessages sfInterfaceMessages;
+
+    /**
+     * author - Vivek
+     * ModifiedBy - Vani
+     * Create All Indexers segment file
+     *
+     * @return - Returns Indexers status
+     */
+
+    @PostMapping(path = CREATE_ALL_INDEXERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createAllIndexer(HttpServletRequest request) throws IOException {
+        JsonObject successObj = new JsonObject();
+        Map<String, Object> indexerResult = new HashMap<>(), errorMap = new HashMap<>();
+        List<IndexerDomain> indexerDomains = lucIndexerRepo.findByStatussk(Constants.INDEXER_STATUS_SK);
+        SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("INFO.MESSAGE.INDEXERCREATIONSTART"));
+        if (request.getParameterMap() != null && (request.getParameterMap().containsKey("Sync") || request.getParameterMap().containsKey("sync"))) {
+            jmsTemplate.convertAndSend(INDEXER_SYNC,
+                    new SFInterfaceIndexerSyncModel(INDEXER_CREATE_ALL, null, null));
+        }
+
+        for (IndexerDomain indexerDomain : indexerDomains) {
+            try {
+                IndexWritersModel writersModel = indexWriters.get(indexerDomain.getName());
+                if (writersModel == null) {
+                    updateIndexerModel(indexerDomain.getName());
+                    writersModel = indexWriters.get(indexerDomain.getName());
+                }
+                if (writersModel != null) {
+                    if (writersModel.isAvailable()) {
+                        indexerResult = SFInterfaceBase.createIndexer(writersModel, indexerDomain.getName(), indexerDomain.getQuery(), indexerDomain.getIndexerkeyaliasname(), jdbcTemplate);
+                        if (indexerResult.size() == NUM_ZERO) {
+                            SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + INTERRUPTED);
+                            //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                            errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.EMPTYINDEXER", null, null);
+                            successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                            successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                            successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                        } else {
+                            if (indexerResult.size() > NUM_ZERO && indexerResult.get(RESPONSE).toString().equalsIgnoreCase(SUCCESS)) {
+                                SFInterfaceLoggerBase.log(LOGGER, Constants.INSERT, indexerDomain.getName(), null, null, null, null, null, "");
+                                SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + CREATED);
+                                successObj.addProperty(indexerDomain.getName(), Boolean.TRUE);
+                            } else {
+                                SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + INTERRUPTED);
+                                successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                                successObj.addProperty(ERROR, (String) indexerResult.get(RESPONSE));
+                            }
+                        }
+                    } else {
+                        //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                        errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INDEXER.LOCKED", null, null);
+                        successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                        successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                        successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                    }
+                } else {
+                    //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                    errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INDEXER.BEAN.NOT.AVAILABLE", null, null);
+                    successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                    successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                    successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                }
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage());
+                successObj.addProperty(ERROR, (String) SFInterfaceServices.ISPExceptionHandler(e, null, null).get(ERROR));
+            }
+        }
+        SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("INFO.MESSAGE.INDEXERCREATIONEND"));
+
+        return successObj.toString();
+    }
+
+    /**
+     * author - Vivek
+     * ModifiedBy - Vani
+     * Create Indexer segment file
+     *
+     * @param indexerName
+     * @return - Returns Indexer status
+     */
+
+    @PostMapping(path = CREATE_INDEXER_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createIndexerByIndexerName(String[] indexerName, HttpServletRequest request) throws IOException {
+        JsonObject successObj = new JsonObject();
+        Map<String, Object> indexerResult = new HashMap<>();
+        Map<String, Object> errorMap = new HashMap<>();
+        int count = NUM_ZERO;
+        try {
+            List<IndexerDomain> indexerDomains = lucIndexerRepo.findByStatussk(Constants.INDEXER_STATUS_SK);
+            SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("INFO.MESSAGE.INDEXERCREATIONSTART"));
+            if (request.getParameterMap() != null && (request.getParameterMap().containsKey("Sync") || request.getParameterMap().containsKey("sync"))) {
+                jmsTemplate.convertAndSend(INDEXER_SYNC,
+                        new SFInterfaceIndexerSyncModel(INDEXER_CREATE, indexerName, null));
+            }
+            for (IndexerDomain indexerDomain : indexerDomains) {
+                if (Arrays.asList(indexerName).contains(indexerDomain.getName())) {
+                    count++;
+                    try {
+                        IndexWritersModel writersModel = indexWriters.get(indexerDomain.getName());
+                        if (writersModel == null) {
+                            updateIndexerModel(indexerDomain.getName());
+                            writersModel = indexWriters.get(indexerDomain.getName());
+                        }
+                        if (writersModel != null) {
+                            if (writersModel.isAvailable()) {
+                                indexerResult = SFInterfaceBase.createIndexer(writersModel, indexerDomain.getName(), indexerDomain.getQuery(), indexerDomain.getIndexerkeyaliasname(), jdbcTemplate);
+                                if (indexerResult.size() == NUM_ZERO) {
+                                    SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + INTERRUPTED);
+                                    //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                                    errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.EMPTYINDEXER", null, null);
+                                    successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                                    successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                                    successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                                } else {
+                                    if (indexerResult.size() > NUM_ZERO && indexerResult.get(RESPONSE).toString().equalsIgnoreCase(SUCCESS)) {
+                                        SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + CREATED);
+                                        SFInterfaceLoggerBase.log(LOGGER, Constants.INSERT, indexerDomain.getName(), null, null, null, null, null, "");
+                                        successObj.addProperty(indexerDomain.getName(), Boolean.TRUE);
+                                    } else {
+                                        SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + INTERRUPTED);
+                                        successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                                        successObj.addProperty(ERROR, (String) indexerResult.get(RESPONSE));
+                                    }
+                                }
+                            } else {
+                                //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                                errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INDEXER.LOCKED", null, null);
+                                successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                                successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                                successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                            }
+                        } else {
+                            //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                            errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INDEXER.BEAN.NOT.AVAILABLE", null, null);
+                            successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                            successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                            successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                        }
+                    } catch (IOException e) {
+                        LOGGER.error(e.getMessage());
+                        successObj.addProperty(ERROR, (String) SFInterfaceServices.ISPExceptionHandler(e, null, null).get(ERROR));
+                    }
+                }
+            }
+            if (count == NUM_ZERO) {
+                successObj.addProperty(ERROR, indexerName[NUM_ZERO] + " - " + INVALID_INDEXER);
+            }
+            count = NUM_ZERO;
+            SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("INFO.MESSAGE.INDEXERCREATIONEND"));
+        } catch (Exception e) {
+            SFInterfaceLoggerBase.log(LOGGER, indexerName[NUM_ZERO] + FAILED_BECAUSE + e.getMessage());
+            successObj.addProperty(ERROR, (String) SFInterfaceServices.ISPExceptionHandler(e, null, null).get(ERROR));
+        }
+
+        return successObj.toString();
+    }
+
+    /**
+     * @param indexerName
+     * @param ticketID
+     * @return - Returns Indexer status
+     * @author - Vivek
+     * @ModifiedBy - Vani
+     * Update Indexer segment file
+     */
+    @PostMapping(path = UPDATE_INDEXER_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String updateIndexerByIndexerName(String indexerName, String[] ticketID, HttpServletRequest request) throws IOException {
+        JsonObject successObj = new JsonObject();
+        Boolean indexerstatus = Boolean.FALSE;
+        StringBuilder ticketIDQuery = new StringBuilder("");
+        Map<String, Object> errorMap = new HashMap<>();
+        if (request.getParameterMap() != null && (request.getParameterMap().containsKey("Sync") || request.getParameterMap().containsKey("sync"))) {
+            jmsTemplate.convertAndSend(INDEXER_SYNC,
+                    new SFInterfaceIndexerSyncModel(INDEXER_UPDATE, new String[]{indexerName}, ticketID));
+        }
+        IndexerDomain indexerDomain = lucIndexerRepo.findByNameAndStatussk(indexerName, Constants.INDEXER_STATUS_SK);
+        if (indexerDomain != null && !indexerDomain.getQuery().isEmpty()) {
+            SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("INFO.MESSAGE.INDEXERUPDATESTART"));
+            for (String ticketid : ticketID) {
+                if (ticketIDQuery.length() > NUM_ZERO) {
+                    ticketIDQuery.append(",'" + ticketid + "'");
+                } else {
+                    ticketIDQuery.append("'" + ticketid + "'");
+                }
+            }
+            try {
+                IndexWritersModel writersModel = indexWriters.get(indexerDomain.getName());
+                if (writersModel != null) {
+                    if (writersModel.isAvailable()) {
+                        String updateQuery = indexerDomain.getQuery() + WHERE + indexerDomain.getIndexerkey() + " IN ( " + ticketIDQuery + " )";
+                        indexerstatus = SFInterfaceBase.updateindexer(writersModel.getIndexWriter(), indexerDomain.getName(), updateQuery, indexerDomain.getIndexerkeyaliasname(), jdbcTemplate, ticketID);
+                        SFInterfaceLoggerBase.log(LOGGER, Constants.UPDATE, indexerDomain.getName(), null, null, ticketIDQuery.toString(), null, null, "");
+                    } else {
+                        //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                        errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INDEXER.LOCKED", null, null);
+                        successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                        successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                        successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                    }
+                } else {
+                    //successObj.addProperty(indexerDomain.getName(), Boolean.FALSE);
+                    errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INDEXER.BEAN.NOT.AVAILABLE", null, null);
+                    successObj.addProperty(MESSAGE, (String) errorMap.get(MESSAGE));
+                    successObj.addProperty(INFOCODE, (String) errorMap.get(INFOCODE));
+                    successObj.addProperty(MOREINFO, (String) errorMap.get(MOREINFO));
+                }
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage());
+                successObj.addProperty(ERROR, (String) SFInterfaceServices.ISPExceptionHandler(e, null, null).get(ERROR));
+            }
+            SFInterfaceLoggerBase.log(LOGGER, indexerDomain.getName() + UPDATED);
+            successObj.addProperty(indexerDomain.getName(), indexerstatus);
+
+            SFInterfaceLoggerBase.log(LOGGER, sfInterfaceMessages.get("INFO.MESSAGE.INDEXERUPDATEEND"));
+        }
+        return successObj.toString();
+    }
+
+    public Map<String, IndexWritersModel> updateIndexerModel(String indexerName) throws IOException {
+        Analyzer analyzer = new CustomAnalyzer();
+        Directory index = createIndexerDirectory(indexerName);
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        indexWriters.put(indexerName, new IndexWritersModel(new IndexWriter(index, config), indexerName));
+        return indexWriters;
+    }
+
+    public Directory createIndexerDirectory(String dirName) throws IOException {
+        Path indexFile = Paths.get(basePath, dirName);
+        if (!indexFile.toFile().exists()) {
+            indexFile.toFile().mkdirs();
+        }
+        Directory index = new SimpleFSDirectory(indexFile);
+        return index;
+    }
+
+
+}
+
+
+
+

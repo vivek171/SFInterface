@@ -1,0 +1,68 @@
+package com.htc.remedy.config;
+
+import com.htc.remedy.constants.Constants;
+import com.htc.remedy.core.CustomAnalyzer;
+import com.htc.remedy.domain.IndexerDomain;
+import com.htc.remedy.model.IndexWritersModel;
+import com.htc.remedy.repo.LucIndexerRepo;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Configuration
+public class IndexerUtilities {
+
+    @Value("${app.caretech.search.index-base-path}")
+    String basePath;
+
+    @Autowired
+    LucIndexerRepo lucIndexerRepo;
+
+    @Bean(name = "IndexerWriters")
+    public Map<String, IndexWritersModel> jdbcSFTemplate() {
+        Map<String, IndexWritersModel> indexwriters = new HashMap<>();
+        Analyzer analyzer = new CustomAnalyzer();
+        List<IndexerDomain> indexers = lucIndexerRepo.findByStatussk(Constants.INDEXER_STATUS_SK);
+        indexers.stream().forEach(indexerDomain -> {
+            try {
+                Directory index = createIndexerDirectory(indexerDomain.getName());
+                IndexWriterConfig config = new IndexWriterConfig(analyzer);
+                indexwriters.put(indexerDomain.getName(), new IndexWritersModel(new IndexWriter(index, config), indexerDomain.getName()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return indexwriters;
+    }
+
+    public Directory createIndexerDirectory(String dirName) throws IOException {
+        Path indexFile = Paths.get(basePath, dirName);
+        if (!indexFile.toFile().exists()) {
+            indexFile.toFile().mkdirs();
+        }
+        Directory index = new SimpleFSDirectory(indexFile);
+        return index;
+    }
+
+    public Boolean indexDirectoryExist(String dirName) throws IOException {
+        Path indexFile = Paths.get(basePath, dirName);
+        if (indexFile.toFile().exists())
+            return true;
+        else
+            return false;
+    }
+
+}

@@ -1,0 +1,182 @@
+package com.htc.remedy.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import java.util.Set;
+
+@Entity
+@Table(name="SEC_LDAP_Details")
+public class LDAPAccounts {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "LDAP_Details_sk")
+    private Long id;
+
+    @Column
+    private String client;
+
+    @Column(name = "description")
+    private String desc;
+
+    @Column
+    private String host;
+
+    @Column
+    private Integer port;
+    @Column
+    private
+    String username;
+
+    @Column
+    private String password;
+
+    @Column
+    private String domain;
+
+    @Column
+    private String base;
+
+    @Column
+    private String filter;
+
+    @Column
+    private String searchDN;
+
+    @Column
+    private String connName;
+
+    @Column
+    private String pretext;
+
+    @Column
+    private String posttext;
+
+    @Column
+    private boolean sso = false;
+
+    public boolean isSso() {
+        return sso;
+    }
+
+    public void setSso(boolean sso) {
+        this.sso = sso;
+    }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "ldapAccounts", fetch = FetchType.LAZY)
+    Set<LDAPEndPoints> ldapEndPoints;
+
+    public LDAPAccounts() {
+    }
+
+
+    public String getConnName() {
+        return connName;
+    }
+
+    public void setConnName(String connName) {
+        this.connName = connName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public String getBase() {
+        return base;
+    }
+
+    public void setBase(String base) {
+        this.base = base;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public String getSearchDN() {
+        return searchDN;
+    }
+
+    public void setSearchDN(String searchDN) {
+        this.searchDN = searchDN;
+    }
+
+    public String getPretext() {
+        return pretext;
+    }
+
+    public void setPretext(String pretext) {
+        this.pretext = pretext;
+    }
+
+    public String getPosttext() {
+        return posttext;
+    }
+
+    public void setPosttext(String posttext) {
+        this.posttext = posttext;
+    }
+}

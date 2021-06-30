@@ -1,0 +1,9 @@
+DECLARE @password VARCHAR(100)='%2s',@username INT=%1s;
+SELECT		 People_Info_sk AS User_sk,
+			 RefID2 AS NetworkLogin,
+             RefID1 AS RemedyID,
+			 RefID3 AS UserID,
+             Client AS Account
+FROM FDN_People_Info WITH (NOLOCK)
+WHERE PEOPLE_INFO_SK=@username
+AND (ADPassword = HASHBYTES('SHA2_512', @password) OR Password=HASHBYTES('SHA2_512',@password))

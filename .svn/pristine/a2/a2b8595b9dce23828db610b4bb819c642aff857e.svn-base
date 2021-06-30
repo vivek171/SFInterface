@@ -1,0 +1,43 @@
+package com.htc.remedy.model;
+
+import com.htc.remedy.base.BaseModel;
+import org.apache.lucene.index.IndexWriter;
+
+public class IndexWritersModel implements BaseModel {
+    IndexWriter indexWriter;
+    Boolean available = Boolean.TRUE;
+    String indexername;
+
+    public IndexWriter getIndexWriter() {
+        return indexWriter;
+    }
+
+    public void setIndexWriter(IndexWriter indexWriter) {
+        this.indexWriter = indexWriter;
+    }
+
+    public Boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public String getIndexername() {
+        return indexername;
+    }
+
+    public void setIndexername(String indexername) {
+        this.indexername = indexername;
+    }
+
+
+    public IndexWritersModel() {
+    }
+
+    public IndexWritersModel(IndexWriter indexWriter, String indexername) {
+        this.indexWriter = indexWriter;
+        this.indexername = indexername;
+    }
+}

@@ -1,0 +1,22 @@
+package com.htc.remedy.repo;
+
+import com.htc.remedy.domain.IndexerDomain;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.LockModeType;
+import java.util.List;
+
+/**
+ * Created by kvivek on 11/3/2017.
+ */
+@Repository
+public interface LucIndexerRepo extends JpaRepository<IndexerDomain, Long> {
+    @Lock(LockModeType.NONE)
+    List<IndexerDomain> findByStatussk(int statussk);
+
+    @Lock(LockModeType.NONE)
+    IndexerDomain findByNameAndStatussk(String indexername, int status);
+
+}

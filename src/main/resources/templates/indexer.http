@@ -1,0 +1,180 @@
+###
+POST http://10.165.135.90:8443/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "DynamicList",
+  "query": "SELECT lv.Label, lv.Description AS Value,ln.Description AS DynamicList, acc.accountcode AS Account,lv.LovFunction AS [Function],lv.type AS Type,lv.ReferenceGroup AS [Group],se.description AS Status FROM FDN_LOVName ln WITH (NOLOCK)  INNER JOIN FDN_LOVValues lv WITH (NOLOCK) ON lv.LOVName_sk = ln.LOVName_sk  INNER JOIN SEC_Account acc WITH (NOLOCK) ON ln.Account_sk = acc.Account_sk  INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON lv.Status_sk = se.Status_sk"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "LdapDetails",
+  "query": "SELECT base AS Base_Url,SSO AS SSO, client AS Client,conn_name AS ConnectionName,domain AS Domain,filter AS Filter,host AS Host,username  AS Username,password  AS Password,port AS Port,searchdn  AS SearchDN, posttext  AS PostText,pretext AS PreText,SSO,racc.AccountCode FROM SEC_LDAP_Details ld WITH (NOLOCK) LEFT OUTER JOIN SEC_Account acc WITH (NOLOCK) ON ld.Client = acc.AccountCode LEFT OUTER JOIN SEC_RelatedAccounts ra WITH (NOLOCK) ON ra.Relation_sk = acc.Account_sk LEFT OUTER JOIN SEC_Account racc WITH (NOLOCK) ON ra.Account_sk = racc.Account_sk LEFT OUTER JOIN FDN_StatusEntity se WITH (NOLOCK) ON acc.Status_sk = se.Status_sk AND racc.Status_sk = se.Status_sk AND se.Code = 'A'"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "UserGroups",
+  "query": "SELECT DISTINCT grp.GroupCode,grp.GroupName,grp.LongGroupName,RefID1,RefID2,RefID3,racc.AccountCode,ppl.Client FROM SEC_Group grp WITH (NOLOCK) INNER JOIN SEC_AccountGroup ag WITH (NOLOCK) ON ag.Group_sk = grp.Group_sk AND grp.Status = 1 INNER JOIN SEC_AccGroupUser agu WITH (NOLOCK) ON agu.AccountGroup_sk = ag.AccountGroup_sk AND agu.Status = 1 INNER JOIN FDN_People_Info ppl WITH (NOLOCK) ON agu.People_Info_sk = ppl.People_Info_sk LEFT OUTER JOIN SEC_Account acc WITH (NOLOCK) ON ppl.Account_sk = acc.Account_sk LEFT OUTER JOIN SEC_RelatedAccounts ra WITH (NOLOCK) ON ra.Relation_sk = acc.Account_sk LEFT OUTER JOIN SEC_Account racc WITH (NOLOCK) ON ra.Account_sk = racc.Account_sk LEFT OUTER JOIN FDN_StatusEntity se WITH (NOLOCK) ON acc.Status_sk = se.Status_sk AND racc.Status_sk = se.Status_sk AND ppl.Status_sk = se.Status_sk AND se.Code = 'A'"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "MasterChildAccounts",
+  "query": "select account.Account_sk  as Client_ID,account.AccountName as Client_Name,account.AccountCode as Client,account.Status_sk   as Client_Status,parent.AccountCode  as Parent_Client from SEC_Account account inner join SEC_Account parent on account.ParentAccount_sk = parent.Account_sk"
+}
+
+
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "PeopleInfo",
+  "query": "SELECT People_Info_SK,Client AS Account,racc.accountcode AS AccountCode,REFID1 AS RefID1,REFID2 AS RefID2,REFID3 AS RefID3 FROM FDN_People_Info ppl WITH (NOLOCK) INNER JOIN FDN_StatusEntity pse WITH (NOLOCK) ON ppl.Status_sk = pse.Status_sk AND pse.Code = 'A' LEFT OUTER JOIN SEC_Account acc WITH (NOLOCK) ON ppl.Account_sk = acc.Account_sk LEFT OUTER JOIN SEC_RelatedAccounts ra WITH (NOLOCK) ON ra.Relation_sk = acc.Account_sk LEFT OUTER JOIN SEC_Account racc WITH (NOLOCK) ON ra.Account_sk = racc.Account_sk   LEFT OUTER JOIN FDN_StatusEntity se WITH (NOLOCK) ON acc.Status_sk = se.Status_sk  AND se.Code = 'A' AND racc.Status_sk = se.Status_sk"
+}
+
+###
+POST http://10.165.125.26:8083/searchref/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "FDNPeopleInfo",
+  "query": "SELECT Fname AS Fname,LName AS LName,RefID2 AS RefID2,People_Info_sk AS People_Info_sk,Client AS Client FROM FDN_people_info fp WITH (NOLOCK) INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON se.Status_sk = fp.Status_sk where Client IN ('CTS','CTCC','CTPL')"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "PeopleInfo-CTCA",
+  "query": "SELECT People_Info_sk,Fname AS FirstName,Middle_Init AS MiddleInitial,LName AS LastName,Full_Name AS FullName,Emp_No AS EmployeeNumber,BusEmailID AS EmailAddress,RefID1 AS RefID1,RefID2 AS RefID2,RefID3 AS RefID3,RefID4 AS RefID4,Designation AS Designation,Suite AS Suite,Floor AS Floor,Department AS Department,Building AS Building,Office AS Office,Pager_Alpha AS PagerAlpha,Pager_Numeric AS PagerNumeric,Phone_Cell AS PhoneCell,Phone_Home AS PhoneHome,Phone_Work AS PhoneWork,Phone_Ext AS PhoneExt,Fax AS Fax,Client AS Account,supervisor_login,supervisor_name,Is_Support_Person AS IsSupportPerson,Cost_code AS CostCode,Title AS Title,VIP AS VIP,Notify_Method AS NotifyMethod,CST AS CST,Queue AS Queue,role AS Role,role_desc AS RoleDescription,Business_Organization AS BusinessOrganization,Client_Note AS ClientNote,IsActive,PerEmailID,Password,AssignedGroup,GUID,Status_sk,Pager_Pin,ExtSysID,Client_Note_Expiration_Date,PeopleSoft_EMPID,Company_Code,SSPpreferedcontactMethod,Account_sk,Queue_sk,Designation_sk,ADPassword FROM FDN_PEOPLE_INFO WHERE CLient IN ('CTS','CTCC','CTPL')"
+}
+
+###Fetch All user information
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "PeopleInfo",
+  "query": "SELECT People_Info_SK,Client AS Account,acc.accountcode AS AccountCode,REFID1 AS RefID1,REFID2 AS RefID2,REFID3 AS RefID3, PerEmailID as PersonalEmailAddress, Emp_No as Employee_Number,ppl.Status_sk,pse.Description AS DesStatus   ,ISNULL(Fname,'') as   Fname,ISNULL(Middle_Init,'') as   Middle_Init ,ISNULL(LName,'') as LName    ,ISNULL(Full_Name,'') as  Full_Name    ,ISNULL(Emp_No,'') as Emp_No ,ISNULL(BusEmailID,'') as BusinessEmailAddress ,ISNULL(RefID1,'') as   ITSM_Login ,ISNULL(RefID2,'') as  Network_Login ,ISNULL(RefID3,'') as  Local_Login    ,ISNULL(RefID4,'') as  RefID4 ,ISNULL(Designation,'') as     Designation ,ISNULL(Suite,'') as Suite ,ISNULL(Floor,'') as  Floor    ,ISNULL(Department,'') as Department ,ISNULL(Building,'') as   Building    ,ISNULL(Office,'') as  Office ,ISNULL(Pager_Alpha,'') as Pager_Alpha ,ISNULL(Pager_Numeric,'') as  Pager_Numeric   ,ISNULL(Phone_Cell,'') as     Phone_Cell,ISNULL(Phone_Home,'') as    Phone_Home    ,ISNULL(Phone_Work,'') as  Phone_Work ,ISNULL(Phone_Ext,'') as    Phone_Ext ,ISNULL(Fax,'') as    Fax,ISNULL(Client,'') as Client ,ISNULL(supervisor_login,'') as  supervisor_login ,ISNULL(supervisor_name,'') as    supervisor_name,ISNULL(Is_Support_Person,'') as  Support_Person_ ,ISNULL(Cost_code,'') as           Cost_code    ,ISNULL(Title,'') as          Title    ,ISNULL(VIP,'') as         VIP    ,ISNULL(Notify_Method,'') as      Notify_Method ,ISNULL(CST,'') as    CST  ,ISNULL(ppl.Queue,'') as   Queue,ISNULL(role,'') as      Role_x,ISNULL(role_desc,'') as   Role_Prefix,ISNULL(Business_Organization,'') as   Business_Organization ,ISNULL(Client_Note,'') as Client_Note ,ISNULL(ad_company,'') as  ad_company  ,ISNULL(ad_department,'') as    ad_department,ISNULL(ppl.AssignedGroup,'') as AssignedGroup,ISNULL(GUID,'') as GUID,ISNULL(Pager_Pin,'') as Pager_Pin,ISNULL(ExtSysID,'') as ExtSysID,ISNULL(Client_Note_Expiration_Date,'') as Client_Note_Expiration_Date,racc.AccountCode FROM FDN_People_Info ppl WITH (NOLOCK)INNER JOIN FDN_StatusEntity pse WITH (NOLOCK) ON ppl.Status_sk = pse.Status_sk AND pse.Code = 'A' LEFT OUTER JOIN SEC_Account acc WITH (NOLOCK) ON ppl.Account_sk = acc.Account_sk LEFT OUTER JOIN SEC_RelatedAccounts ra WITH (NOLOCK) ON ra.Relation_sk = acc.Account_sk LEFT OUTER JOIN SEC_Account racc WITH (NOLOCK) ON ra.Account_sk = racc.Account_sk   LEFT OUTER JOIN FDN_StatusEntity se WITH (NOLOCK) ON acc.Status_sk = se.Status_sk AND racc.Status_sk = se.Status_sk AND se.Code = 'A'"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+  "indexerName": "LocalUserAuthentication",
+  "query": "SELECT  RefID2 AS NetworkLogin ,RefID3 AS RemedyID,Client,racc.AccountCode,Password FROM FDN_People_Info ppl WITH (NOLOCK) INNER JOIN FDN_StatusEntity pse WITH (NOLOCK)  ON ppl.Status_sk = pse.Status_sk AND pse.Code = 'A' LEFT OUTER JOIN SEC_Account acc WITH (NOLOCK) ON ppl.Account_sk = acc.Account_sk LEFT OUTER JOIN SEC_RelatedAccounts ra WITH (NOLOCK) ON ra.Relation_sk = acc.Account_sk LEFT OUTER JOIN SEC_Account racc WITH (NOLOCK) ON ra.Account_sk = racc.Account_sk LEFT OUTER JOIN FDN_StatusEntity se WITH (NOLOCK) ON acc.Status_sk = se.Status_sk AND racc.Status_sk = se.Status_sk AND se.Code = 'A'"
+}
+
+
+
+
+###
+POST http://10.165.135.90:8443/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "Approvals",
+ "query": "Select se.Description AS Status,fpeo.client AS Account,fpeo.RefID1 AS LoginID,fa.XProcessCode AS ProcessCode,fa.XCriteria1 AS Criteria1,fa.XCriteria2 AS Criteria2,fa.XCriteria3 AS Criteria3,fa.XCriteria4 AS Criteria4,fa.XCriteria5 AS Criteria5,fa.CreatedBy AS CreatedBy,fa.CreatedOn AS CreateDate,fa.ModifiedBy AS ModifiedBy,fa.ModifiedOn AS ModifiedDate,fpeo.Building AS Building,fpeo.Business_Organization AS BusinessOrganization,fpeo.Department AS Department,fpeo.BusEmailID AS EmailAddress,fpeo.FName AS Firstname,fpeo.Floor AS Floor,fpeo.Full_Name AS FullName,fpeo.LName AS LastName,fpeo.REFID1 AS LoginID,fpeo.Office AS Office,fpeo.Phone_Work AS Phone,fpeo.Suite AS Suite,designation.Name AS Designation FROM FDN_Approvals fa WITH (NOLOCK) INNER JOIN FDN_people_info fpeo WITH (NOLOCK) ON fa.YPrimaryApprover_sk = fpeo.People_Info_sk INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON se.Status_sk = fpeo.Status_sk LEFT JOIN FDN_Designation designation WITH (NOLOCK) ON fpeo.designation_sk=designation.Designation_sk"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "TaskDetails",
+ "query": "SELECT tag.AssignedIndividual_sk AS AssigneeLogin,fpeo.Full_Name AS AssignedIndividual,sg.GroupName AS AssignedGroup,td.AutoProvision AS AutoProvision,account.Account_sk,account.AccountCode AS Account, GUID,td.TimeInMinutes AS Minutes,td.IsAutoAssign AS ManualAssign,td.DirectToClose AS DirecttoClose,sg.GroupCode AS GroupID,td.RemovePDT AS RemovePDT,tg.TaskGroup_sk,td.TaskGroup_sk AS RequestType,td.AutoAckAfterAssigned AS SettoAcknowledgeafterAssigned,td.ApprovalType_sk AS Approval, status.Description AS Status,ft.TaskName AS Task,ft.TaskInformation AS TaskDetails,td.TaskDetailsCode AS TaskID,td.Sequence AS TaskSequence  FROM FDN_TaskDetails td WITH (NOLOCK) INNER JOIN FDN_TaskGroup tg WITH (NOLOCK) ON td.TaskGroup_sk=tg.TaskGroup_sk INNER JOIN FDN_Task ft WITH (NOLOCK) ON ft.Task_sk = td.Task_sk  INNER JOIN FDN_StatusEntity status WITH (NOLOCK) ON td.status_sk=status.status_sk INNER JOIN SEC_Account account WITH (NOLOCK) ON account.account_sk=ft.account_sk LEFT JOIN FDN_TaskAccountGroup tag WITH (NOLOCK) ON   td.TaskDetails_sk =tag.TaskDetails_sk LEFT JOIN FDN_people_Info fpeo WITH (NOLOCK) ON tag.AssignedIndividual_sk = fpeo.People_Info_sk LEFT JOIN SEC_Group sg WITH (NOLOCK) ON tag.AssignedGroup_sk = sg.Group_sk"
+}
+
+###
+POST http://10.165.135.90:8443/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "Location",
+ "query": "select DISTINCT department.name as Department,building.name as Building,'' AS Floor,'' AS Suite,account.accountcode AS Account,se.description AS Status from  FDN_Building building INNER JOIN FDN_Department department WITH (NOLOCK) ON department.Building_sk=building.Building_sk INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON department.Status_sk = se.Status_sk INNER JOIN sec_account account WITH (NOLOCK) ON building.account_sk=account.Account_sk"
+}
+###
+POST http://10.165.135.90:8443/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "Account",
+ "query": "select account.accountcode AS Account,account.account_sk AS account_sk,se.description AS Status FROM SEC_ACCOUNT account INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON account.Status_sk = se.Status_sk"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "CTI",
+ "query": "SELECT  rm.RDYMapping_sk,rm.YCTI_SK AS CTI_sk,sg.Group_sk AS AssignedGroup_sk,rm.yAssignedIndividual_sk AS AssignedIndividual_sk,rm.XPrimaryApprover_sk AS Approver__c, fpeo.Full_Name AS AssignedIndividual, fpeo.RefID1 AS AssignedIndividualLoginID,fc.Name AS Category,sa.AccountCode AS Account,rm.XCriteria2 AS Criteria2,rm.XCriteria3 AS Criteria3,sg.GroupCode AS GroupCode,sg.GroupName AS GroupName,fi.Name AS Item,fp.Name AS Priority ,rm.XProcessCode AS ProcessCode,ft.Name AS Type,rm.XCriteria1 AS Criteria1,se.Description AS Status,fbu.Name AS Application  FROM RDY_Mapping rm WITH (NOLOCK) INNER JOIN SEC_Account sa WITH (NOLOCK) ON rm.Account_sk=sa.Account_sk INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON  rm.Status_sk=se.Status_sk INNER  JOIN FDN_CTI fcti WITH (NOLOCK) ON rm.YCTI_sk = fcti.CTI_SK INNER JOIN FDN_Category fc WITH (NOLOCK) ON fcti.Category_sk=fc.Category_sk INNER JOIN FDN_Type ft WITH (NOLOCK) ON fcti.Type_sk=ft.Type_sk INNER JOIN FDN_Item fi WITH (NOLOCK) ON fcti.Item_sk=fi.Item_sk LEFT OUTER JOIN FDN_Priority fp WITH (NOLOCK) ON fcti.Priority_sk=fp.Priority_sk INNER JOIN SEC_AccountGroup sag WITH (NOLOCK) ON sag.AccountGroup_sk = rm.YaccountGroup_sk INNER JOIN FDN_BusinessFunction fbu WITH (NOLOCK) ON fcti.BusinessFunction_sk=fbu.BusinessFunction_sk LEFT OUTER JOIN SEC_Group sg WITH (NOLOCK) ON sg.Group_sk = sag.Group_sk LEFT OUTER JOIN FDN_people_Info fpeo WITH (NOLOCK) ON rm.YAssignedIndividual_sk = fpeo.People_Info_sk"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "AssignedGroup",
+ "query": "SELECT  Distinct fbu.Name AS Application,se.description AS Status,fd.name AS Department,fb.name AS Building,fbu.BusinessFunctionCode,sa.accountcode  AS Account,fc.name AS Category,ft.name AS Type,fi.name AS Item,sg.Group_sk AS GroupCode,sg.GroupName AS GroupName FROM RDY_Mapping rm WITH (NOLOCK) INNER JOIN SEC_Account sa WITH (NOLOCK) ON sa.Account_sk = rm.Account_sk INNER JOIN SEC_AccountGroup sag WITH (NOLOCK) ON sag.AccountGroup_sk = rm.YaccountGroup_sk INNER JOIN SEC_Group sg WITH (NOLOCK) ON sg.Group_sk = sag.Group_sk INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON se.Status_sk = rm.Status_sk INNER JOIN FDN_BusinessFunction fbu WITH (NOLOCK) ON fbu.BusinessFunction_sk = rm.XBusinessFunction_sk INNER JOIN FDN_Category fc WITH (NOLOCK) ON fc.Category_sk = rm.XCategory_sk LEFT JOIN FDN_Type ft WITH (NOLOCK) ON ft.Type_sk = rm.XType_sk LEFT JOIN FDN_Item fi WITH (NOLOCK) ON fi.Item_sk = rm.XItem_sk LEFT JOIN FDN_Building fb WITH (NOLOCK) ON fb.Building_sk = rm.XBuilding_sk LEFT JOIN FDN_Department fd WITH (NOLOCK) ON fd.Department_sk = rm.XDepartment_sk ORDER BY Account,Category,Type,Item"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "PendingReason",
+ "query": "SELECT pr.Description AS Reason,se.description AS Status,pr.ExternalSysID AS ExternalTicketID,pr.name,pr.description,sa.accountcode AS Account FROM FDN_PendingReasons pr WITH (NOLOCK) INNER JOIN SEC_Account sa WITH (NOLOCK) ON pr.Account_sk = sa.Account_sk INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON pr.Status_sk = se.Status_sk"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "Queue",
+ "query": "SELECT fq.Queue_sk,fq.Name AS Queue,sa.accountcode AS Account,se.description AS Status FROM FDN_Queue fq WITH (NOLOCK) INNER JOIN SEC_Account sa WITH (NOLOCK) ON sa.Account_sk = fq.Account_sk INNER JOIN FDN_StatusEntity se WITH (NOLOCK) ON se.Status_sk = fq.Status_sk"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "AssignedIndividual",
+ "query": "SELECT agu.AccGroupUser_sk,fpi.Full_Name AS FullName, client AS Account,fpi.RefID1 AS LoginID ,sg.GroupName AS GroupName,agu.IsDefaultGroup AS Default_Group, sgt.Name AS Functional_Type,agu.IsNotifyGrpTicket AS Group_Ticket_Notify,agu.Status,fpi.Notify_Method AS Notification_Method, fpi.BusEmailID AS Notification_Address FROM SEC_AccGroupUser agu  WITH (NOLOCK) INNER JOIN FDN_People_Info fpi WITH (NOLOCK) ON fpi.People_Info_sk = agu.People_Info_sk INNER JOIN SEC_AccountGroup sag WITH (NOLOCK) ON sag.AccountGroup_sk = agu.AccountGroup_sk  INNER JOIN SEC_Account account WITH (NOLOCK) ON sag.account_sk=account.account_sk INNER JOIN SEC_Group sg WITH (NOLOCK) ON sg.Group_sk = sag.Group_sk  INNER JOIN SEC_GroupType sgt WITH (NOLOCK) ON sgt.GroupType_sk = sag.GroupType_sk WHERE  sgt.Name !='Client'"
+}
+
+###
+POST http://10.165.135.81:8080/ctsspi/whoosh/create-indexer
+Content-Type: application/json
+
+{
+ "indexerName": "AccountMaster",
+ "query": "SELECT sa1.Account_sk AS Account_sk,sa1.AccountCode AS Account,sa1.AccountName AS AccountCodeName,sa1.ParentAccount_SK AS MasterAccount_sk,(SELECT CONCAT((SELECT sa2.AccountCode FROM SEC_Account sa2 WHERE sa2.Account_sk= CASE WHEN sa1.ParentAccount_sk = 0 THEN sa1.Account_sk ELSE sa1.ParentAccount_sk END),' - ',(SELECT sa2.AccountName FROM SEC_Account sa2 WHERE sa2.Account_sk= CASE WHEN sa1.ParentAccount_sk = 0 THEN sa1.Account_sk ELSE sa1.ParentAccount_sk END))) AS MasterAccountCodeName,(SELECT sa2.AccountName FROM SEC_Account sa2 WHERE sa2.Account_sk= CASE WHEN sa1.ParentAccount_sk = 0 THEN sa1.Account_sk ELSE sa1.ParentAccount_sk END) AS Master_Client ,accounttype.description as AccountStatus FROM SEC_Account sa1 WITH (NOLOCK) INNER JOIN SEC_AccountType accounttype ON sa1.AccountType_sk=accounttype.AccountType_sk"
+}
+
+###
+
+
+
+

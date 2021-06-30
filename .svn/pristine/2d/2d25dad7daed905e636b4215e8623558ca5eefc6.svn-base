@@ -1,0 +1,117 @@
+{
+  "Account": {
+    "resultset_key": "Account_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Building": {
+    "resultset_key": "Building_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Department": {
+    "resultset_key": "Department_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "CTI": {
+    "resultset_key": "CTI_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Designation": {
+    "resultset_key": "Designation_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "PendingReason": {
+    "resultset_key": "PendingReason_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "SecureAnswers": {
+    "resultset_key": "SecureAnswers_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "ManageAccountGroup": {
+    "resultset_key": "AccountGroup_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "ProblemManager": {
+    "resultset_key": "ProblemManager_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Priority": {
+    "resultset_key": "Priority_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Vendor": {
+    "resultset_key": "Vendor_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Floor": {
+    "resultset_key": "Floor_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "Suite": {
+    "resultset_key": "Suite_sk",
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  },
+  "ObjectPermissions": {
+    "resultset_key": "ObjectPermission_sk",
+    "alternate_key": {
+      "Object_sk": "Object.Object_sk"
+    },
+    "dependency_indexer": {
+      "Building": {
+        "queryparam": "Building_sk"
+      }
+    }
+  }
+}

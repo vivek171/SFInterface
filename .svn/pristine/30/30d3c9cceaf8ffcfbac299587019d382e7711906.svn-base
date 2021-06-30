@@ -1,0 +1,192 @@
+package com.htc.remedy.oauth;
+
+
+import com.bmc.arsys.api.ARException;
+import com.bmc.arsys.api.ARServerUser;
+import com.htc.remedy.base.SFInterfaceLoggerBase;
+import com.htc.remedy.base.SFInterfaceMessages;
+import com.htc.remedy.db.ReferenceDBConnector;
+import com.htc.remedy.domain.LDAPAccounts;
+import com.htc.remedy.ldap.LDAPComponent;
+import com.htc.remedy.model.User;
+import com.htc.remedy.repo.UserRepo;
+import com.htc.remedy.services.SFInterfaceServices;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+
+@Configuration
+public class CustomAuthenticationManager implements AuthenticationManager {
+
+    private static final Logger logger = LogManager.getLogger(CustomAuthenticationManager.class);
+
+    @Value("${remedy.host}")
+    String remedyHost;
+
+    @Value("${remedy.port}")
+    Integer remedyPort;
+
+    @Value("${ad_auth_test_mode_enabled}")
+    String testinmodeenabled;
+
+    @Value("${check_ldap}")
+    String check_ldap;
+
+
+    @Autowired
+    UserRepo userRepo;
+
+    @Autowired
+    ReferenceDBConnector referenceDBConnector;
+
+    @Autowired
+    SFInterfaceMessages messages;
+
+
+    @Autowired
+    LDAPComponent ldapComponent;
+
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        String client = "",
+                authType = "",
+                adfscode = "",
+                userName = "",
+                password = "";
+
+        if (Map.class.cast(authentication.getDetails()).get("client") != null) {
+            client = Map.class.cast(authentication.getDetails()).get("client").toString();
+        }
+
+        if (Map.class.cast(authentication.getDetails()).get("auth_type") != null) {
+            authType = Map.class.cast(authentication.getDetails()).get("auth_type").toString().toLowerCase();
+        }
+        if (Map.class.cast(authentication.getDetails()).get("code") != null) {
+            adfscode = Map.class.cast(authentication.getDetails()).get("code").toString().toLowerCase();
+        }
+
+        userName = authentication.getName();
+        password = authentication.getCredentials().toString();
+        userName = userName.toUpperCase();
+
+        List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
+
+        boolean isADAuthenticated = false;
+        boolean isRemedyAuthenticated = false;
+        boolean isLocalAuthenticated = false;
+        boolean isadfsAuthenticated = false;
+
+        String CustomUserName = "";
+        try {
+            if (client.isEmpty())
+                client = "CTS";
+            User users = SFInterfaceServices.getUserLogin(userName, client);
+            User user;
+            if (users != null) {
+                switch (authType) {
+                    case "ldap": {
+                        if (testinmodeenabled.equalsIgnoreCase("true")) {
+                            user = referenceDBConnector.authenticateUserLocal(users.getUserID(), password, "local");
+                            if (user != null) {
+                                isADAuthenticated = Boolean.TRUE;
+                            } else if (check_ldap.equalsIgnoreCase("true")) {
+                                List<LDAPAccounts> accounts = SFInterfaceServices.getLdapAccountsForClient(client);
+                                if (accounts != null) {
+                                    String finalUserName = userName;
+                                    String finalPassword = password;
+                                    if (accounts.parallelStream().anyMatch(account -> ldapComponent.ldapBind(account, finalUserName, finalPassword))) {
+                                        isADAuthenticated = Boolean.TRUE;
+                                        referenceDBConnector.syncLdapPassword(users.getUserID(), password, users.getClient());
+                                    }
+                                }
+                            }
+                        } else {
+                            user = referenceDBConnector.authenticateUserLocal(users.getUserID(), password, "ad");
+                            if (user != null) {
+                                isADAuthenticated = Boolean.TRUE;
+                            } else {
+                                List<LDAPAccounts> accounts = SFInterfaceServices.getLdapAccountsForClient(client);
+                                if (accounts != null) {
+                                    String finalUserName = userName;
+                                    String finalPassword = password;
+                                    if (accounts.parallelStream().anyMatch(account -> ldapComponent.ldapBind(account, finalUserName, finalPassword))) {
+                                        isADAuthenticated = Boolean.TRUE;
+                                        referenceDBConnector.syncLdapPassword(users.getUserID(), password, users.getClient());
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    break;
+                    case "local": {
+                        user = referenceDBConnector.authenticateUserLocal(users.getUserID(), password, "local");
+                        if (user != null)
+                            isLocalAuthenticated = Boolean.TRUE;
+                    }
+                    break;
+                    case "remedy": {
+                        ARServerUser arServerUser = new ARServerUser();
+                        arServerUser.setPort(remedyPort);
+                        arServerUser.setServer(remedyHost);
+                        arServerUser.setPassword(password);
+                        arServerUser.setUser(userName);
+                        try {
+                            arServerUser.login();
+                            isRemedyAuthenticated = true;
+                        } catch (ARException e) {
+                            SFInterfaceLoggerBase.exception(logger, AUTH_TOKEN, e);
+                        }
+                    }
+                    break;
+                    case "adfs": {
+                        if (adfscode.equalsIgnoreCase("adfs"))
+                            isadfsAuthenticated = true;
+                    }
+                    break;
+                }
+
+                CustomUserName = userName + "~" + client + "~" + users.getUserID();
+                if (isLocalAuthenticated || isRemedyAuthenticated || isADAuthenticated || isadfsAuthenticated) {
+                    if (users == null) {
+                        SFInterfaceLoggerBase.log(logger, messages.get("AUTHENTICATION.STATUS.LOGIN") + EMPTY + ERROR + EMPTY + ACCOUNT + COLON + client + EMPTY + USERS + COLON + userName + EMPTY + messages.get("AUTHENTICATION.SUCCESS.PROFILE.NOTFOUND"));
+                        throw new BadCredentialsException(messages.get("AUTHENTICATION.SUCCESS.PROFILE.NOTFOUND"));
+                    } else {
+                        SFInterfaceLoggerBase.log(logger, messages.get("AUTHENTICATION.STATUS.LOGIN") + EMPTY + SUCCESS + EMPTY + ACCOUNT + COLON + client + EMPTY + USERS + COLON + userName);
+                    }
+                } else {
+                    SFInterfaceLoggerBase.log(logger, messages.get("AUTHENTICATION.STATUS.LOGIN") + EMPTY + ERROR + EMPTY + ACCOUNT + COLON + client + EMPTY + USERS + COLON + userName + EMPTY + messages.get("AUTHENTICATION.ERROR.LOGINFAILED"));
+                    throw new BadCredentialsException(messages.get("AUTHENTICATION.ERROR.LOGINFAILED"));
+                }
+            } else {
+                SFInterfaceLoggerBase.log(logger, messages.get("AUTHENTICATION.STATUS.LOGIN") + EMPTY + ERROR + EMPTY + ACCOUNT + COLON + client + EMPTY + USERS + COLON + userName + EMPTY + messages.get("AUTHENTICATION.ERROR.PROFILE.NOTFOUND"));
+                throw new BadCredentialsException(messages.get("AUTHENTICATION.ERROR.LOGINFAILED"));
+            }
+        } catch (
+                Exception e) {
+            throw new BadCredentialsException(e.getMessage());
+        }
+        return new
+                UsernamePasswordAuthenticationToken(
+                CustomUserName,
+                password,
+                grantedAuths
+        );
+    }
+
+}

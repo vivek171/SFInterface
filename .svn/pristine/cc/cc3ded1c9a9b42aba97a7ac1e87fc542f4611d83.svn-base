@@ -1,0 +1,46 @@
+package com.htc.remedy.oauth;
+
+
+import com.htc.remedy.base.SFInterfaceLoggerBase;
+import com.htc.remedy.base.SFInterfaceMessages;
+import com.htc.remedy.db.ReferenceDBConnector;
+import com.htc.remedy.repo.UserRepo;
+import com.htc.remedy.services.SFInterfaceServices;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+
+@Service("userDetailsService")
+public class CustomUserDetail implements UserDetailsService {
+
+    private static final Logger logger = LogManager.getLogger(CustomUserDetail.class);
+
+    @Autowired
+    ReferenceDBConnector referenceDBConnector;
+
+    @Autowired
+    UserRepo userRepo;
+
+    @Autowired
+    SFInterfaceMessages messages;
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        try {
+            String[] usernameAndClient = s.split("~");
+            SFInterfaceLoggerBase.log(logger, ACCOUNT + COLON + usernameAndClient[1] + EMPTY + USERS + COLON + usernameAndClient[0] + EMPTY + SUCCESS + EMPTY + messages.get("AUTHENTICATION.SUCCESS.STATUS.REFRESH"));
+            return SFInterfaceServices.getUserLogin(usernameAndClient[0], usernameAndClient[1]);
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
+        return null;
+    }
+}

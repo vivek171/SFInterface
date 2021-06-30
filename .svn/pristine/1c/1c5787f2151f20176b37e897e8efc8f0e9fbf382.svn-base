@@ -1,0 +1,85 @@
+package com.htc.remedy.model;
+
+import java.util.Objects;
+
+public class GroupRDB {
+    String groupId;
+    String groupCode;
+    String accountGroupsk;
+    String groupName;
+    String longGroupName;
+    String groupType;
+
+
+    public String getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+
+    public String getAccountGroupsk() {
+        return accountGroupsk;
+    }
+
+    public void setAccountGroupsk(String accountGroupsk) {
+        this.accountGroupsk = accountGroupsk;
+    }
+
+    public GroupRDB(String groupId, String groupCode, String accountGroupsk, String groupName, String longGroupName, String groupType) {
+        this.groupId = groupId;
+        this.groupCode = groupCode;
+        this.accountGroupsk = accountGroupsk;
+        this.groupName = groupName;
+        this.longGroupName = longGroupName;
+        this.groupType = groupType;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getLongGroupName() {
+        return longGroupName;
+    }
+
+    public void setLongGroupName(String longGroupName) {
+        this.longGroupName = longGroupName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GroupRDB groupRDB = (GroupRDB) o;
+        return Objects.equals(groupCode, groupRDB.groupCode) &&
+                Objects.equals(groupName, groupRDB.groupName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupCode, groupName);
+    }
+}

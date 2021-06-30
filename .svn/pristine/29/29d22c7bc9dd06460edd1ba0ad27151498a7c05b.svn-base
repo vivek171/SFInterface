@@ -1,0 +1,151 @@
+package com.htc.remedy.config;
+
+
+import com.htc.remedy.base.SFInterfaceLoggerBase;
+import com.htc.remedy.controller.SFInterfaceController;
+import com.htc.remedy.domain.JDBCAccounts;
+import com.htc.remedy.model.accountconfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.COLON;
+import static com.htc.remedy.constants.SFInterfaceConstants.NUM_ONE;
+
+@Configuration
+public class JDBCConfiguration {
+
+    private static final Logger LOGGER = LogManager.getLogger(JDBCConfiguration.class);
+
+    private static
+    List<accountconfig> accountconfigList;
+
+
+    @Autowired
+    public JDBCConfiguration(@Qualifier(value = "jdbcmodel") List<accountconfig> accountconfigList) {
+        this.accountconfigList = accountconfigList;
+    }
+
+    @Bean(name = "jdbcAccTemplate")
+    public Map<String, JdbcTemplate> jdbcSFTemplate() {
+        return createJdbcTemplates();
+    }
+
+
+    public static Map<String, JdbcTemplate> createJdbcTemplates() {
+        Map<String, JdbcTemplate> JdbcTemplates = new HashMap<>();
+        List<JDBCAccounts> jdbcAccounts = new ArrayList<>();
+
+        accountconfigList.stream()
+                .forEach(accountconfig -> {
+                    accountconfig.getDb().stream()
+                            .forEach(db -> {
+                                JDBCAccounts jdbcAccounts1 = new JDBCAccounts();
+                                jdbcAccounts1.setDatabaseName(db.getDatabasename());
+                                jdbcAccounts1.setActive(true);
+                                jdbcAccounts1.setDriverclassname(db.getDriverclassname());
+                                jdbcAccounts1.setEnvironment(db.getConnectionname());
+                                jdbcAccounts1.setHost(db.getHost());
+                                jdbcAccounts1.setPassword(db.getPassword());
+                                jdbcAccounts1.setUsername(db.getUsername());
+                                jdbcAccounts1.setPort(db.getPort());
+                                jdbcAccounts.add(jdbcAccounts1);
+                            });
+                });
+
+        jdbcAccounts.forEach(jdbcAccounts1 -> {
+            try {
+                JdbcTemplates.put(jdbcAccounts1.getEnvironment(), createJdbcTemplate(jdbcAccounts1));
+            } catch (Exception e) {
+            }
+        });
+        return JdbcTemplates;
+    }
+
+    public static Map<String, JdbcTemplate> refreshJdbcTemplate(Map<String, JdbcTemplate> jdbcTemplateMap) {
+        List<JDBCAccounts> jdbcAccounts = new ArrayList<>();
+        accountconfigList.stream()
+                .forEach(accountconfig -> {
+                    accountconfig.getDb().stream()
+                            .forEach(db -> {
+                                JDBCAccounts jdbcAccounts1 = new JDBCAccounts();
+                                jdbcAccounts1.setDatabaseName(db.getDatabasename());
+                                jdbcAccounts1.setActive(true);
+                                jdbcAccounts1.setDriverclassname(db.getDriverclassname());
+                                jdbcAccounts1.setEnvironment(db.getConnectionname());
+                                jdbcAccounts1.setHost(db.getHost());
+                                jdbcAccounts1.setPassword(db.getPassword());
+                                jdbcAccounts1.setUsername(db.getUsername());
+                                jdbcAccounts1.setPort(db.getPort());
+                                jdbcAccounts.add(jdbcAccounts1);
+                            });
+                });
+        jdbcAccounts.forEach(jdbcAccounts1 -> {
+            try {
+                if (jdbcTemplateMap.get(jdbcAccounts1.getEnvironment()) == null
+                        ||
+                        !jdbcTemplateMap.get(jdbcAccounts1.getEnvironment()).getDataSource().getConnection().isValid(NUM_ONE)) {
+                    closeJdbcTemplate(jdbcTemplateMap.get(jdbcAccounts1.getEnvironment()));     //close the existing connection and try opening new
+                    JdbcTemplate jdbcTemplate = createJdbcTemplate(jdbcAccounts1);
+                    jdbcTemplateMap.put(jdbcAccounts1.getEnvironment(), jdbcTemplate);
+                    SFInterfaceLoggerBase.log(LOGGER, "RefreshJdbcTemplate" + COLON + jdbcAccounts1.getEnvironment(), "Connection Refreshed!");
+                } else {
+                    SFInterfaceLoggerBase.log(LOGGER, "RefreshJdbcTemplate" + COLON + jdbcAccounts1.getEnvironment(), "Connection Exist!");
+                }
+            } catch (Exception e) {
+                SFInterfaceLoggerBase.exception(LOGGER, "RefreshJdbcTemplate" + COLON + jdbcAccounts1.getEnvironment(), e);
+                closeJdbcTemplate(jdbcTemplateMap.get(jdbcAccounts1.getEnvironment()));         //close the existing connection and try opening new
+            }
+        });
+        return jdbcTemplateMap;
+    }
+
+    public static JdbcTemplate createJdbcTemplate(JDBCAccounts jdbcAccounts1) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        String hostURL = "";
+        String url = jdbcAccounts1.getDriverclassname().contains("sqlserver") ? "jdbc:sqlserver://" : "jdbc:mysql://";
+
+        if (jdbcAccounts1.getDriverclassname().contains("sqlserver")) {
+            hostURL += url + jdbcAccounts1.getHost() + ":" + jdbcAccounts1.getPort() + ";databaseName=" + jdbcAccounts1.getDatabaseName();
+        } else {
+            hostURL += url + jdbcAccounts1.getHost() + ":" + jdbcAccounts1.getPort() + "/" + jdbcAccounts1.getDatabaseName() + "?useSSL=false&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=UTF-8&characterSetResults=UTF-8";
+        }
+
+        jdbcTemplate.setDataSource(
+                DataSourceBuilder
+                        .create()
+                        .url(hostURL)
+                        .driverClassName(jdbcAccounts1.getDriverclassname())
+                        .username(jdbcAccounts1.getUsername())
+                        .password(jdbcAccounts1.getPassword())
+                        .build());
+
+        return jdbcTemplate;
+    }
+
+    public static void closeJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        try {
+            if (!jdbcTemplate.getDataSource().getConnection().isClosed()) {
+                jdbcTemplate.getDataSource().getConnection().close();
+            }
+        } catch (Exception e) {
+        }
+    }
+
+
+}
+
+
+

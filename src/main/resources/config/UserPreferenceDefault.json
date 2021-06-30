@@ -1,0 +1,69 @@
+{
+  "Default": {
+    "Alerts": [
+      {
+        "FEM Approval": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "FLR": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "Outage": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "Assignment": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "Ticket Approval": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "SLA": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "Chat": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      },
+      {
+        "WorkUpdate": {
+          "Mobile": "False",
+          "RT": "False",
+          "Email": "False"
+        }
+      }
+    ]
+  },
+  "COMM": {
+    "Types": [
+      "ALL"
+    ],
+    "BestTimetoContact": "",
+    "PreferredContactMode": ""
+  }
+}

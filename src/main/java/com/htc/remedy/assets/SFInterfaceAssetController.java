@@ -1,0 +1,49 @@
+package com.htc.remedy.assets;
+
+import com.htc.remedy.base.SFInterfaceConnectionBase;
+import com.htc.remedy.constants.SFInterfaceConstants;
+import com.htc.remedy.model.User;
+import com.htc.remedy.services.SFInterfaceServices;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Map;
+
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+import static com.htc.remedy.services.SFInterfaceServices.trimToken;
+
+@RestController
+@RequestMapping(path = "/Assets")
+@Order(1)
+public class SFInterfaceAssetController {
+
+    private static final Logger LOGGER = LogManager.getLogger(SFInterfaceAssetController.class);
+
+    @GetMapping(path = GET_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity processEndPointGet(Model model,
+                                             @PathVariable(ENDPOINT_NAME) String endpointName,
+                                             @PathVariable(VERSION) String version,
+                                             @RequestHeader(value = A_TOKEN, required = FALSE) String aToken,
+                                             @RequestHeader(value = ACCESS_TOKEN, required = FALSE) String accessToken,
+                                             @RequestHeader(value = REFRESH_TOKEN, required = FALSE) String refreshToken,
+                                             @RequestBody(required = FALSE) Map<String, Object> ticketFields,
+                                             HttpServletRequest request) throws IOException {
+        try {
+            User user = SFInterfaceConnectionBase.fetchRequestInfo(request);
+            return SFInterfaceAssetServices.processAssetRequest(trimToken(aToken), trimToken(refreshToken), trimToken(accessToken), ticketFields, endpointName
+                    , version, SFInterfaceConnectionBase.fetchJdbcTemplatebyType(user, SFInterfaceConstants.getDbAssetConnectionName()), request);
+        } catch (Exception e) {
+            return new ResponseEntity(SFInterfaceServices.ISPExceptionHandler(e, null, endpointName), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+}
+

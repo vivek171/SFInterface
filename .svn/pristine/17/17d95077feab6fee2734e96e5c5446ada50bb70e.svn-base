@@ -1,0 +1,164 @@
+package com.htc.remedy.config;
+
+import com.htc.remedy.constants.Constants;
+import com.htc.remedy.core.CustomAnalyzer;
+import com.htc.remedy.domain.IndexerDomain;
+import com.htc.remedy.model.IndexWritersModel;
+import com.htc.remedy.model.accountconfig;
+import com.htc.remedy.repo.LucIndexerRepo;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Configuration
+public class IndexerUtilities {
+
+    @Value("${app.caretech.search.index-base-path}")
+    String basePath;
+
+    @Autowired
+    @Qualifier(value = "jdbcAccTemplate")
+    Map<String, JdbcTemplate> jdbcTemplateMap;
+
+
+    private static
+    Environment environment;
+
+    private static
+    List<accountconfig> accountconfigList;
+
+    @Autowired
+    public IndexerUtilities(Environment environment, @Qualifier(value = "jdbcmodel") List<accountconfig> accountconfigList) {
+        this.environment = environment;
+        this.accountconfigList = accountconfigList;
+    }
+
+    @Bean(name = "IndexerWriters")
+    public Map<String, Map<String, IndexWritersModel>> jdbcSFTemplate() {
+        Map<String, Map<String, IndexWritersModel>> indexwriters = new HashMap<>();
+
+        jdbcTemplateMap.entrySet().forEach(
+                stringJdbcTemplateEntry ->
+                {
+                    if (stringJdbcTemplateEntry.getKey().endsWith(environment.getProperty("db.ref.connectionname"))) {
+                        List<IndexerDomain> indexers = fetchIndexers(stringJdbcTemplateEntry.getValue());
+                        indexers.stream().forEach(indexerDomain -> {
+                            try {
+                                Map<String, IndexWritersModel> indexWritersModelMap = indexwriters.get(indexerDomain.getName());
+                                if (indexWritersModelMap == null) {
+                                    indexWritersModelMap = new HashMap<>();
+                                }
+                                indexWritersModelMap.put(fetchpathbyConnectionName(stringJdbcTemplateEntry.getKey()),
+                                        fetchIndexerWriterModal(indexerDomain.getName(), fetchpathbyConnectionName(stringJdbcTemplateEntry.getKey())));
+                                indexwriters.put(indexerDomain.getName(), indexWritersModelMap);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                }
+        );
+        return indexwriters;
+    }
+
+
+    public Directory createIndexerDirectory(String dirName) throws IOException {
+        Path indexFile = Paths.get(basePath, dirName);
+        if (!indexFile.toFile().exists()) {
+            indexFile.toFile().mkdirs();
+        }
+        Directory index = new SimpleFSDirectory(indexFile);
+        return index;
+    }
+
+    public Boolean indexDirectoryExist(String dirName) throws IOException {
+        Path indexFile = Paths.get(basePath, dirName);
+        if (indexFile.toFile().exists())
+            return true;
+        else
+            return false;
+    }
+
+    public static List<IndexerDomain> fetchIndexers(JdbcTemplate jdbcTemplate) {
+        List<Map<String, Object>> results = jdbcTemplate.queryForList("Select indexer_sk,indexername,indexerquery,indexerkeyfield,indexerkeyfieldaliasname,status From luc_indexer with (nolock) where status=1");
+        List<IndexerDomain> indexerDomains = results.stream()
+                .map(stringObjectMap -> new IndexerDomain(
+                        Long.parseLong(String.valueOf(stringObjectMap.get("indexer_sk")))
+                        , (String) stringObjectMap.get("indexername")
+                        , (String) stringObjectMap.get("indexerquery")
+                        , (String) stringObjectMap.get("indexerkeyfield")
+                        , (String) stringObjectMap.get("indexerkeyfieldaliasname")
+                        , null
+                        , (stringObjectMap.get("status") != null && stringObjectMap.get("status").equals(true)) ? 1 : 0
+                ))
+                .collect(Collectors.toList());
+
+        return indexerDomains;
+    }
+
+    public static String fetchpathbyConnectionName(String connectionname) {
+
+        return accountconfigList.stream().filter(accountconfig -> accountconfig.getDb().parallelStream().anyMatch(db -> db.getConnectionname().equalsIgnoreCase(connectionname)))
+                .map(accountconfig -> accountconfig.getIndexer_path())
+                .collect(Collectors.joining());
+    }
+
+
+    public static List<IndexerDomain> findByNameAndStatussk(JdbcTemplate jdbcTemplate, String indexerName) {
+        List<Map<String, Object>> results = jdbcTemplate.queryForList(String.format("Select indexer_sk,indexername,indexerquery,indexerkeyfield,indexerkeyfieldaliasname,status From luc_indexer with (nolock) where status=1 and indexername='%s'", indexerName));
+        List<IndexerDomain> indexerDomains = results.stream()
+                .map(stringObjectMap -> new IndexerDomain(
+                        Long.parseLong(String.valueOf(stringObjectMap.get("indexer_sk")))
+                        , (String) stringObjectMap.get("indexername")
+                        , (String) stringObjectMap.get("indexerquery")
+                        , (String) stringObjectMap.get("indexerkeyfield")
+                        , (String) stringObjectMap.get("indexerkeyfieldaliasname")
+                        , null
+                        , (stringObjectMap.get("status") != null && stringObjectMap.get("status").equals(true)) ? 1 : 0
+                ))
+                .collect(Collectors.toList());
+
+        return indexerDomains;
+    }
+
+    public static IndexWritersModel fetchIndexerWriterModal(String indexerName, String instanceName) throws IOException {
+        Analyzer analyzer = new CustomAnalyzer();
+        Directory index = createIndexerDirectory(instanceName, indexerName);
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        IndexWriter writer = new IndexWriter(index, config);
+        IndexWritersModel writersModel = new IndexWritersModel();
+        writersModel.setAvailable(true);
+        writersModel.setConnectionName(instanceName);
+        writersModel.setIndexername(indexerName);
+        writersModel.setIndexWriter(writer);
+        return writersModel;
+    }
+
+    public static Directory createIndexerDirectory(String account, String dirName) throws IOException {
+        Path indexFile = Paths.get(environment.getProperty("app.caretech.search.index-base-path"), account, dirName);
+        if (!indexFile.toFile().exists()) {
+            indexFile.toFile().mkdirs();
+        }
+        Directory index = new SimpleFSDirectory(indexFile);
+        return index;
+    }
+
+
+}

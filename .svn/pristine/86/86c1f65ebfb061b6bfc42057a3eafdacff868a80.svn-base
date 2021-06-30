@@ -1,0 +1,113 @@
+package com.htc.remedy.assets;
+
+import com.google.gson.JsonObject;
+import com.htc.remedy.base.SFInterfaceBase;
+import com.htc.remedy.base.SFInterfaceConnectionBase;
+import com.htc.remedy.base.SFInterfaceMessages;
+import com.htc.remedy.constants.Constants;
+import com.htc.remedy.model.CustomWhooshModel;
+import com.htc.remedy.model.User;
+import com.htc.remedy.services.SFInterfaceServices;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.htc.remedy.constants.Constants.VOID;
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+import static com.htc.remedy.services.SFInterfaceServices.isRequestContainToken;
+
+@Service
+@Component
+public class SFInterfaceAssetServices {
+
+    private static final Logger LOGGER = LogManager.getLogger(SFInterfaceAssetServices.class);
+
+    private static
+    SFInterfaceMessages sfInterfaceMessages;
+
+    @Autowired
+    public SFInterfaceAssetServices(SFInterfaceMessages sfInterfaceMessages) throws FileNotFoundException {
+        this.sfInterfaceMessages = sfInterfaceMessages;
+    }
+
+    public static ResponseEntity<List<Map<String, Object>>> processAssetRequest(String aToken, String refreshToken, String accessToken
+            , Map<String, Object> ticketFields, String endpointName, String version, JdbcTemplate asmtJDBCTemplate, HttpServletRequest request) throws Exception {
+
+        List<Map<String, Object>> resultMap = new ArrayList<>();
+        Map<String, String[]> params = new HashMap<>(), params1 = new HashMap<>();
+        Map<String, Object> errorMap = new HashMap<>();
+        JsonObject jsonObject = new JsonObject();
+        String loginID = "", spQuery = "";
+
+        try {
+            if (isRequestContainToken(aToken, refreshToken, accessToken)) {
+                User user = SFInterfaceConnectionBase.fetchRequestInfo(request);
+                loginID = user.getAuthUserName();
+
+                if (StringUtils.isNotBlank(loginID)) {
+                    for (Map.Entry<String, String[]> requestparametermaps : request.getParameterMap().entrySet()) {
+                        if (StringUtils.isBlank(requestparametermaps.getValue()[NUM_ZERO])) {
+                            errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.MISSINGVALUEFORKEY", requestparametermaps.getKey(), endpointName);
+                            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+                        }
+                    }
+
+                    for (Map.Entry<String, String[]> stringEntry : request.getParameterMap().entrySet()) {
+                        if (!stringEntry.getKey().equalsIgnoreCase(PAGE_NUMBER) && !stringEntry.getKey().equalsIgnoreCase(COUNT)
+                                && !stringEntry.getKey().equalsIgnoreCase(DISTINCTFIELD) && !stringEntry.getValue()[NUM_ZERO].equalsIgnoreCase(VOID)
+                                && !stringEntry.getKey().equalsIgnoreCase(SORTFIELD) && !stringEntry.getKey().equalsIgnoreCase(SORTORDER)
+                                && !stringEntry.getKey().equalsIgnoreCase(Constants.SELECTEDFIELDS) && !stringEntry.getKey().equalsIgnoreCase(DISTINCT)
+                                && !stringEntry.getKey().equalsIgnoreCase(DEFAULT_JSON)) {
+                            params.put(stringEntry.getKey(), stringEntry.getValue());
+                        }
+                    }
+
+                    if (params.size() > NUM_ZERO) {
+                        CustomWhooshModel customWhooshModel = SFInterfaceBase.generateWhooshModel(request.getParameterMap(), user);
+                        jsonObject = SFInterfaceBase.fetchTicketJsonfromPath(ASSET_SP_MAPPING_JSON_PATH).get("SPMapping").getAsJsonObject();
+                        spQuery = SFInterfaceAssetBase.getDBQuery(jsonObject, params, endpointName);
+
+                        resultMap = SFInterfaceAssetBase.runjdbcQueryWithSelectedColumns(asmtJDBCTemplate, spQuery, customWhooshModel.getRequiredColumns());
+                        resultMap = SFInterfaceBase.sortNDistinct(resultMap, customWhooshModel.getSortfields(), customWhooshModel.getSortorder()
+                                , customWhooshModel.getDistinct(), customWhooshModel.getDistinctfield());
+                    } else {
+                        errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.EMPTYPARAMETERS", null, endpointName);
+                        return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+                    }
+                } else {
+                    errorMap = SFInterfaceServices.getErrorMap("ERROR.MESSAGE.INVALIDAUTHENTICATION", null, endpointName);
+                    return new ResponseEntity(errorMap, HttpStatus.UNAUTHORIZED);
+                }
+            } else {
+                errorMap = SFInterfaceServices.getErrorMap("ERROR.MESSAGE.MISSINGTOKEN", null, endpointName);
+                return new ResponseEntity(errorMap, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(SFInterfaceServices.ISPExceptionHandler(e, null, endpointName), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (resultMap == null) {
+            errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.INVALIDCOLUMN", null, endpointName);
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        } else if (resultMap.size() > NUM_ZERO) {
+            return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        } else {
+            errorMap = SFInterfaceServices.getInfoMap("INFO.MESSAGE.NORECORDSFOUND", null, endpointName);
+            return new ResponseEntity(errorMap, HttpStatus.OK);
+        }
+    }
+
+}

@@ -1,0 +1,152 @@
+spring.session.store-type=none
+server.port=8083
+server.host=0.0.0.0
+remedy.host=10.165.135.23
+remedy.port=5000
+server.context-path=/ctsspi
+ctsspi.encryptkey=ada!6e#d @a4e_7b
+sendmail.password=Password1
+ctsspi.ldap.truststore=C:/CTSSPI/JRE1.8/lib/security/cacerts
+ctsspi.ldap.trustpassword=changeit
+bmth.phoneno=(888)-481-2448
+ctsspi.fileattachment=\\\\10.165.135.123\\ctsspi\\fileattachment\\files\\
+#ctsspi.fileattachment=/fileserver/
+ctsspi.refDBfileattachment=\\\\10.165.135.123\\ctsspi\\fileattachment\\APITesting\\
+ctsspi.refDBfileattachment.archivepath=\\\\10.165.135.123\\ctsspi\\fileattachment\\APITesting\\Archive.zip\\
+springfox.documentation.swagger.v2.path=/swagger/api-docs
+#spring.thymeleaf.mode=LEGACYHTML5
+spring.data.rest.basePath=/api/rest-uri
+ctsspi.server.scheme=http
+#logging.level.org.springframework.ldap = DEBUG
+pebble.suffix=.pb
+app.excelpath=D:\\CTSSPI\\controlidmapping.xls
+ctsspi.username=CTSSP-WEBUSER
+ctsspi.password=P7v9k$xt4a9yM!Xlb
+ctsspi.hash=F9236B49CEFE88CDFA60011EC8EAB45DDA02C78A7C21D04B02F6DA32E5DC41B0
+oauth.tokenTimeout=166400
+spring.datasource.urlref=jdbc:sqlserver://10.165.135.80:1433;databaseName=CTS-CTSSP-STAGING
+spring.datasource.usernameref=CTSdevuser
+spring.datasource.passwordref=CT$dev@se7Pa
+spring.datasource.url=jdbc:sqlserver://10.165.135.80:1433;databaseName=ReferenceDB_Staging
+spring.datasource.username=RefDBUser_QA
+spring.datasource.password=Ref@BU$er9QA356
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.naming.physical-strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+spring.jpa.database-platform=org.hibernate.dialect.SQLServer2008Dialect
+spring.jpa.generate-ddl=true
+#spring.jpa.show-sql=true
+spring.servlet.multipart.max-file-size=100MB
+spring.servlet.multipart.max-request-size=150MB
+spring.http.multipart.enabled=true
+spring.http.multipart.max-file-size=100MB
+spring.http.multipart.max-request-size=150MB
+spring.data.rest.base-path=/rest
+security.oauth2.resource.id=oauth2_id
+spring.jackson.serialization.WRITE_DATES_AS_TIMESTAMPS=false
+spring.jpa.properties.hibernate.connection.charSet=UTF-8
+spring.jpa.properties.hibernate.hbm2ddl.import_files_sql_extractor=org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
+active.group.ids=2
+active.group.name=Active
+#itsm properties
+admin.groups.id=1
+admin.support.groups.id=1,55555555
+support.groups.id=55555555
+admin.groups.name=Administrator
+admin.support.groups.name=Administrator,CSS
+support.groups.name=CSS
+#ssologin
+secret.key=Y3Rzc3A6c2VjcmV0
+sso.token.url=http://10.165.125.26:8083/authreflab/oauth/token
+sso.logindetails.url=http://10.165.125.26:8083/authreflab/user
+sso.logout.url=http://10.165.125.26:8083/authreflab/oauth/revoke-token
+specialcharactersregexpattern=[a-zA-Z0-9_\\-\\:\\"\\+\\?\\&\\(\\)\\[\\]\\, ]*$
+specialcharactersregexpatternforclientsandkbnumber=^[a-zA-Z0-9_\\- ]*$
+sqlregexpattern=SELECT,UNION,EXEC,INSERT
+app.sf.hosts=10.165.135.128,10.165.135.131
+app.ssp.hosts=10.165.135.59,10.165.135.123
+logjson=INSERT,UPDATE,UPDATEATTACHMENTS,FETCH
+refdb.env=refdbstaging
+env.reporting.datasource=endpointlabenvironment
+env.assetmanagement.datasource=ctsamsdevenvironment
+distributionlist.endpointname=ctsldapgroups-usersmanageddistributionlists
+env.sspdb=sspdbenvironmentname
+#Whoosh config start
+#app.caretech.search.index-base-path=\\\\10.165.135.123\\ctsspi\\whoosh\\lucene
+app.caretech.search.index-base-path=C:\\sfiindexer\\lucence\\staging
+app.caretech.default_status=Assigned,Pending,Acknowledged,Resolved
+spring.http.converters.preferred-json-mapper=gson
+endpoint.type.whoosh=WhooshStatic
+endpoint.type.whooshDynamic=WhooshDynamic
+endpoint.type.IQ=IQ
+endpoint.type.ISP=ISP
+#whoosh config end
+
+spring.activemq.packages.trust-all=true
+spring.redis.host=10.165.135.126
+spring.redis.port=6379
+spring.redis.database=5
+
+luc.record.limit=10000
+
+ad_auth_test_mode_enabled=true
+check_ldap=true
+
+#validation api for Sandbox
+ctsspi.workflow.api.url=https://servicefocus2-workflow-staging.ctsmartdesk.com/api/v1/
+ctsspi.getticketinfo.api.url=https://servicefocus2-workflow-staging.ctsmartdesk.com/api/v1/ticketinformation
+
+#file server url for staging
+#ctsspi.fileserver.url=//10.165.135.123/
+
+indexer.sync.ips=10.165.135.65:8080/SFInterface;10.165.135.90:8080/SFInterface;
+indexer.createall.url=/whoosh/CreateAllIndexers
+indexer.create.url=/whoosh/CreateIndexer
+indexer.update.url=/whoosh/UpdateIndexer
+
+######################scheduler_config start#################
+cron.zoneid=Asia/Kolkata
+cron.expression=0 30 8 * * ?
+cron.initialdelay=3000
+cron.jdbc.refresh.delay=0 0 */12 * * *
+######################scheduler_config end###################
+
+#file server url for demo
+ctsspi.fileserver.url=//10.165.135.158/itsm/Staging/
+
+email.ticket.applicationcode=ClassicView
+offline.ticket.applicationcode=Offline
+offline.ticket.emailid=offline-stg.sfocus@caretech.com
+offline.ticket.toemailid=-stg.sfocus@caretech.com
+offline.ticket.default.summary=Offline Ticket
+email.statuscode=A
+email.source=I
+email.record=10
+mail.username=CTSSP-WEBUSER
+
+adfs.login.error.url=https://servicefocus2-staging.ctsmartdesk.com/
+
+cr.filepath=\\\\10.165.135.158\\itsm\\Staging\\CR\\BMTH_cr_data.json
+
+SERVICENOW_FETCH_SYSTEM_ID=https://brookdaledev.service-now.com/api/now/table/{{BusinessFunctionCode}}?sysparm_query=number={{Ticket}}&sysparm_fields=sys_id
+SERVICENOW_FETCH_INCIDENT=https://brookdaledev.service-now.com/api/now/table/{{BusinessFunctionCode}}/{{sys_id}}?sysparm_fields=caller_id,assignment_group,opened_by,sys_updated_on,number,sys_created_by,cmdb_ci,active,work_notes_list,priority,u_business_phone,short_description,sys_class_name,closed_by,parent_incident,reopened_by,assigned_to,sla_due,comments_and_work_notes,escalation,hold_reason,u_building,resolved_by,u_business_service,sys_updated_by,opened_by,user_input,sys_created_on,closed_at,business_service,expected_start,opened_at,caller_id,resolved_at,subcategory,work_notes,close_code,assignment_group,description,close_notes,contact_type,incident_state,urgency,company,u_issue,severity,comments,u_floor,due_date,location,category
+SERVICENOW_FETCH_INCIDENT_DESCRIPTION=https://brookdaledev.service-now.com/api/now/table/task?sysparm_query=number={{Ticket}}^sys_class_name=Incident&sysparm_display_value=true&sysparm_fields=description,comments,comments_and_work_notes
+SERVICENOW_AUTH_HEADER_VALUE=Basic cmFtLmt1bGF0aHVAY2FyZXRlY2guY29tOkNvbXB1dGVyMQ==
+
+#CR Config starts
+cr.ticketurl.default=https://itsm2-staging.ctsmartdesk.com/map?tkt_sk={{Ticket_sk}}&acc_code={{MasterAccount}}&s_acc_code={{Account}}&rf_tkn={{refresh_token}}&issso=True&isanon=False&tkt={{Ticket}}&approval_sk={{Approval_sk}}&approvalnumber={{ApprovalNumber}}&task_sk={{Task_sk}}&tasknumber={{TaskNumber}}
+cr.admin.groupname=ENGL-Admin
+cr.coordinator.groupname=APP-CM-Change Coordinator,APP-CHANGE-MANAGEMENT
+#CR Config Ends
+
+#SSP URL STARTS
+ssp.approval.url=https://services2-staging.ctsmartdesk.com/SSP/admin/FormBuilder/FormEngine/FormEngine.aspx?pid={{SFProcessID}}&formid={{SFFormID}}&sId={{SFSubmissionID}}&urlkey={{URLKey}}&mspg=anonymous&rf_tkn={{refresh_token}}
+#SSP URL ENDS
+
+db.ssp.connectionname=ssp_db
+db.ref.connectionname=ref_db
+db.ref_archive.connectionname=ref_archive_db
+db.reporting.connectionname=reporting_db
+db.asset.connectionname=asset_db
+
+dedicated.instances=shared,bmth

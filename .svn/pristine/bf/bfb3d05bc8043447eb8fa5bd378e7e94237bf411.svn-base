@@ -1,0 +1,87 @@
+package com.htc.remedy.domain;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name="CTSSPI_ldapend_points")
+public class LDAPEndPoints {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "ldap_account_id")
+    private LDAPAccounts ldapAccounts;
+
+    @Column
+    private String endPointName;
+
+    @Column
+    private String base;
+
+    @Column
+    private String query;
+
+
+    @Column
+    private String requiredFields = "*";
+
+    @Column
+    private boolean active = true;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LDAPEndPoints() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LDAPAccounts getLdapAccounts() {
+        return ldapAccounts;
+    }
+
+    public void setLdapAccounts(LDAPAccounts ldapAccounts) {
+        this.ldapAccounts = ldapAccounts;
+    }
+
+    public String getEndPointName() {
+        return endPointName;
+    }
+
+    public void setEndPointName(String endPointName) {
+        this.endPointName = endPointName;
+    }
+
+    public String getBase() {
+        return base;
+    }
+
+    public void setBase(String base) {
+        this.base = base;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String getRequiredFields() {
+        return requiredFields;
+    }
+
+    public void setRequiredFields(String requiredFields) {
+        this.requiredFields = requiredFields;
+    }
+}

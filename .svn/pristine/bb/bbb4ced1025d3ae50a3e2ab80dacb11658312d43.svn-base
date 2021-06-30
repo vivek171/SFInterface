@@ -1,0 +1,607 @@
+{
+  "dev": [
+    {
+      "instanceaccount": "bmth",
+      "indexer_path": "bmth",
+      "account_list": [
+        "bhsd",
+        "bmth"
+      ],
+      "db": [
+        {
+          "connectionname": "bmth_ref_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH_TXN_ITSM_Lab",
+          "username": "BMTHITSMDevUser",
+          "password": "Bmt00HIT$0MDevU$er"
+        },
+        {
+          "connectionname": "bmth_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting",
+          "username": "RefDBUser_Dev",
+          "password": "R@fDb!User@Dev12"
+        },
+        {
+          "connectionname": "bmth_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-SSP-LAB",
+          "username": "BMTHSSPDevUser",
+          "password": "BmtTH$$0PD3vU$er1"
+        },
+        {
+          "connectionname": "bmth_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    },
+    {
+      "instanceaccount": "shared",
+      "indexer_path": "shared",
+      "account_list": [
+        "cts",
+        "engl",
+        "bhmc"
+      ],
+      "db": [
+        {
+          "connectionname": "shared_ref_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ReferenceDB_Lab",
+          "username": "RefDBUser_Dev",
+          "password": "R@fDb!User@Dev12"
+        },{
+          "connectionname": "shared_ref_archive_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-Archive",
+          "username": "RefDBUser_ProdArchive",
+          "password": "RefDBUser@13rod@rchive"
+        },
+        {
+          "connectionname": "shared_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting",
+          "username": "RefDBUser_Dev",
+          "password": "R@fDb!User@Dev12"
+        },
+        {
+          "connectionname": "shared_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-SF2-SSP-Lab",
+          "username": "CTSdevuser",
+          "password": "CT$dev@se7Pa"
+        },
+        {
+          "connectionname": "shared_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    }
+  ],
+  "qa": [
+    {
+      "instanceaccount": "bmth",
+      "indexer_path": "bmth",
+      "account_list": [
+        "bhsd",
+        "bmth"
+      ],
+      "db": [
+        {
+          "connectionname": "bmth_ref_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH_TXN_ITSM_QA",
+          "username": "BMTHITSMAdminUser",
+          "password": "BMtH100TSM@dm1nU$er"
+        },
+        {
+          "connectionname": "bmth_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_QA",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "bmth_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-SSP-QA",
+          "username": "BMTHSSPAdminUser",
+          "password": "BmtT$$SP@1dminUs3r"
+        },
+        {
+          "connectionname": "bmth_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    },
+    {
+      "instanceaccount": "shared",
+      "indexer_path": "shared",
+      "account_list": [
+        "cts",
+        "engl",
+        "bhmc"
+      ],
+      "db": [
+        {
+          "connectionname": "shared_ref_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ReferenceDB_QA",
+          "username": "RefDBAdmin",
+          "password": "R3fD@Admin173_l@b"
+        },
+        {
+          "connectionname": "shared_ref_archive_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-Archive",
+          "username": "RefDBUser_ProdArchive",
+          "password": "RefDBUser@13rod@rchive"
+        },
+        {
+          "connectionname": "shared_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_QA",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "shared_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-SF2-SSP-QA",
+          "username": "CTSdevuser",
+          "password": "CT$dev@se7Pa"
+        },
+        {
+          "connectionname": "shared_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    }
+  ],
+  "demo": [
+    {
+      "instanceaccount": "bmth",
+      "indexer_path": "bmth",
+      "account_list": [
+        "bhsd",
+        "bmth"
+      ],
+      "db": [
+        {
+          "connectionname": "bmth_ref_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH_TXN_ITSM_Demo",
+          "username": "BMTHITSMAdminUser",
+          "password": "BMtH100TSM@dm1nU$er"
+        },
+        {
+          "connectionname": "bmth_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_Demo",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "bmth_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-SSP-Demo",
+          "username": "BMTHSSPAdminUser",
+          "password": "BmtT$$SP@1dminUs3r"
+        },
+        {
+          "connectionname": "bmth_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    },
+    {
+      "instanceaccount": "shared",
+      "indexer_path": "shared",
+      "account_list": [
+        "cts",
+        "engl",
+        "bhmc"
+      ],
+      "db": [
+        {
+          "connectionname": "shared_ref_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ReferenceDB_Demo",
+          "username": "RefDBUser_QA",
+          "password": "Ref@BU$er9QA356"
+        },
+        {
+          "connectionname": "shared_ref_archive_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-Archive",
+          "username": "RefDBUser_ProdArchive",
+          "password": "RefDBUser@13rod@rchive"
+        },
+        {
+          "connectionname": "shared_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_Demo",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "shared_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-SF2-SSP-Demo",
+          "username": "CTSdevuser",
+          "password": "CT$dev@se7Pa"
+        },
+        {
+          "connectionname": "shared_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    }
+  ],
+  "sandbox": [
+    {
+      "instanceaccount": "bmth",
+      "indexer_path": "bmth",
+      "account_list": [
+        "bhsd",
+        "bmth"
+      ],
+      "db": [
+        {
+          "connectionname": "bmth_ref_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH_TXN_ITSM_SandBox",
+          "username": "BMTHITSMAdminUser",
+          "password": "BMtH100TSM@dm1nU$er"
+        },
+        {
+          "connectionname": "bmth_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_sandbox",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "bmth_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-SSP-SandBox",
+          "username": "BMTHSSPAdminUser",
+          "password": "BmtT$$SP@1dminUs3r"
+        },
+        {
+          "connectionname": "bmth_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    },
+    {
+      "instanceaccount": "shared",
+      "indexer_path": "shared",
+      "account_list": [
+        "cts",
+        "engl",
+        "bhmc"
+      ],
+      "db": [
+        {
+          "connectionname": "shared_ref_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ReferenceDB_sandbox",
+          "username": "RefDBUser_QA",
+          "password": "Ref@BU$er9QA356"
+        },
+        {
+          "connectionname": "shared_ref_archive_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-Archive",
+          "username": "RefDBUser_ProdArchive",
+          "password": "RefDBUser@13rod@rchive"
+        },
+        {
+          "connectionname": "shared_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_Sandbox",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "shared_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-SF2-SSP-Sandbox",
+          "username": "CTSdevuser",
+          "password": "CT$dev@se7Pa"
+        },
+        {
+          "connectionname": "shared_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    }
+  ],
+  "staging": [
+    {
+      "instanceaccount": "bmth",
+      "indexer_path": "bmth",
+      "account_list": [
+        "bhsd",
+        "bmth"
+      ],
+      "db": [
+        {
+          "connectionname": "bmth_ref_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH_TXN_ITSM_Staging",
+          "username": "BMTHITSMAdminUser",
+          "password": "BMtH100TSM@dm1nU$er"
+        },
+        {
+          "connectionname": "bmth_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_Staging",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "bmth_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-SSP-Staging",
+          "username": "BMTHSSPAdminUser",
+          "password": "BmtT$$SP@1dminUs3r"
+        },
+        {
+          "connectionname": "bmth_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    },
+    {
+      "instanceaccount": "shared",
+      "indexer_path": "shared",
+      "account_list": [
+        "cts",
+        "engl",
+        "bhmc"
+      ],
+      "db": [
+        {
+          "connectionname": "shared_ref_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ReferenceDB_staging",
+          "username": "RefDBUser_QA",
+          "password": "Ref@BU$er9QA356"
+        },
+        {
+          "connectionname": "shared_ref_archive_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-Archive",
+          "username": "RefDBUser_ProdArchive",
+          "password": "RefDBUser@13rod@rchive"
+        },
+        {
+          "connectionname": "shared_reporting_db",
+          "host": "10.165.125.173",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting_Staging",
+          "username": "TOMSDEV",
+          "password": "Tom$DeV472L@b"
+        },
+        {
+          "connectionname": "shared_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-SF2-SSP-Staging",
+          "username": "CTSdevuser",
+          "password": "CT$dev@se7Pa"
+        },
+        {
+          "connectionname": "shared_asset_db",
+          "host": "10.165.135.187",
+          "port": "3306",
+          "driverclassname": "com.mysql.jdbc.Driver",
+          "databasename": "ctsams_dev",
+          "username": "ctsams_appuser",
+          "password": "Ct$Am$_DeVU$er"
+        }
+      ]
+    }
+  ],
+  "prod": [
+    {
+      "instanceaccount": "bmth",
+      "indexer_path": "bmth",
+      "account_list": [
+        "bhsd",
+        "bmth"
+      ],
+      "db": [
+        {
+          "connectionname": "bmth_ref_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-ITSM-PROD",
+          "username": "BMTHITSMProd",
+          "password": "BMytt0IT2MProd@dmIn"
+        },
+        {
+          "connectionname": "bmth_reporting_db",
+          "host": "10.165.125.158",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting",
+          "username": "SDMetrics",
+          "password": "djfNHK@187"
+        },
+        {
+          "connectionname": "bmth_ssp_db",
+          "host": "10.165.135.80",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "BMTH-TXN-SSP-PROD",
+          "username": "BMTHSSPProd",
+          "password": "BMTh$S00PProd@dmIn"
+        }
+      ]
+    },
+    {
+      "instanceaccount": "shared",
+      "indexer_path": "shared",
+      "account_list": [
+        "cts",
+        "engl",
+        "bhmc"
+      ],
+      "db": [
+        {
+          "connectionname": "shared_ref_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-PROD",
+          "username": "RefDBUser_Prod",
+          "password": "RefDB$3R_1Pro@"
+        },
+        {
+          "connectionname": "shared_ref_archive_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-REFDB-Archive",
+          "username": "RefDBUser_ProdArchive",
+          "password": "RefDBUser@13rod@rchive"
+        },
+        {
+          "connectionname": "shared_reporting_db",
+          "host": "10.165.125.158",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "ARSystem_Reporting",
+          "username": "SDMetrics",
+          "password": "djfNHK@187"
+        },
+        {
+          "connectionname": "shared_ssp_db",
+          "host": "10.165.125.189",
+          "port": "1433",
+          "driverclassname": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+          "databasename": "CTS-SF2-SSP-PROD",
+          "username": "SSPUser_Prod",
+          "password": "S$P^3eR@ProD@12"
+        }
+      ]
+    }
+  ]
+}

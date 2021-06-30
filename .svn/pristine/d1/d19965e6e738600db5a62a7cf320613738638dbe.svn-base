@@ -1,0 +1,45 @@
+Configuration:
+  status: INFO
+
+  appenders:
+    Console:
+      name: LogToConsole
+      PatternLayout:
+        Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+
+    RollingFile:
+      - name: LogToRollingFile
+        fileName: logs/SFInterface.log
+        filePattern: "logs/$${date:yyyy-MM}/SFInterface-%d{MM-dd-yyyy}-%i.log.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 50MB
+        DefaultRollOverStrategy:
+          max: 30
+
+      - name: LogToRollingErrorFile
+        fileName: logs/SFInterfaceError.log
+        filePattern: "logs/$${date:yyyy-MM}/SFInterfaceError-%d{MM-dd-yyyy}-%i.log.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 50MB
+        DefaultRollOverStrategy:
+          max: 30
+
+
+  Loggers:
+    logger:
+      - name: com.htc.remedy
+        level: INFO
+        additivity: false
+        AppenderRef:
+          - ref: LogToRollingFile
+
+    Root:
+      level: ERROR
+      AppenderRef:
+        - ref: LogToRollingErrorFile

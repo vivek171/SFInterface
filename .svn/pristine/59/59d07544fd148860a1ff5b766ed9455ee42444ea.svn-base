@@ -1,0 +1,3 @@
+UPDATE FDN_People_Info
+SET otpSecret = '%2$s'
+WHERE (People_info_sk = '%1$s')

@@ -1,0 +1,39 @@
+package com.htc.remedy.model;
+
+import com.htc.remedy.base.BaseModel;
+
+public class SFInterfaceIndexerSyncModel implements BaseModel {
+    String action;
+    String[] indexernames;
+    String[] ticketids;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String[] getIndexernames() {
+        return indexernames;
+    }
+
+    public void setIndexernames(String[] indexernames) {
+        this.indexernames = indexernames;
+    }
+
+    public String[] getTicketids() {
+        return ticketids;
+    }
+
+    public void setTicketids(String[] ticketids) {
+        this.ticketids = ticketids;
+    }
+
+    public SFInterfaceIndexerSyncModel(String action, String[] indexernames, String[] ticketids) {
+        this.action = action;
+        this.indexernames = indexernames;
+        this.ticketids = ticketids;
+    }
+}

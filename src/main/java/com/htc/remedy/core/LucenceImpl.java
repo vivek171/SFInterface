@@ -1,0 +1,281 @@
+package com.htc.remedy.core;
+
+import com.htc.remedy.constants.SFInterfaceConstants;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.*;
+import org.apache.lucene.store.Directory;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.htc.remedy.constants.Constants.INDEXER_ALIAS_COLUMN_NAME_INT;
+import static com.htc.remedy.constants.Constants.INDEXER_ALIAS_COLUMN_NAME_SK;
+import static com.htc.remedy.constants.SFInterfaceConstants.*;
+
+
+public class LucenceImpl implements IndexerIntf {
+    Directory directory;
+
+    public LucenceImpl(Directory directory) {
+        this.directory = directory;
+    }
+
+    public Directory getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(Directory directory) {
+        this.directory = directory;
+    }
+
+
+  /*  public IndexWriter indexWriter() throws IOException {
+        Analyzer analyzer = new StandardAnalyzer();
+        Directory index = this.getDirectory();
+
+  //      index.obtainLock(IndexWriter.WRITE_LOCK_NAME);
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        return new IndexWriter(index, config);
+    }*/
+
+    public IndexReader indexReader() throws IOException {
+        Directory index = this.getDirectory();
+        IndexReader reader = DirectoryReader.open(index);
+        return reader;
+    }
+
+    @Override
+    public void removeDocument(Entry entry) {
+
+    }
+
+    @Override
+    public void removeDocument(String docid) {
+
+    }
+
+    @Override
+    public String formQuery(String query) throws IOException {
+        IndexReader indexReader = null;
+        indexReader = indexReader();
+        Document doc = indexReader.document(0);
+        Set<String> fieldsset = doc.getFields().parallelStream().map(field -> field.name()).collect(Collectors.toSet());
+        return fieldsset.parallelStream()
+                .map(fieldname -> fieldname.equalsIgnoreCase("ticket") ?
+                        fieldname + COLON + ESCAPE_CHARACTER + query + ESCAPE_CHARACTER
+                                + OR + fieldname + COLON + ASTERISK + query
+                        :
+                        fieldname + COLON + ESCAPE_CHARACTER + query + ESCAPE_CHARACTER
+                                + OR + fieldname + COLON + query + ASTERISK
+                )
+                .collect(Collectors.joining(OR));
+    }
+
+    @Override
+    public List<Document> searchDocument(String queryTerm) throws IOException {
+        return this.searchDocument(null, queryTerm);
+    }
+
+    @Override
+    public List<Document> searchDocument(String[] fields, String query) throws IOException {
+        IndexReader indexReader = null;
+        try {
+            indexReader = indexReader();
+
+            if (fields == null) {
+                Document doc = indexReader.document(0);
+                fields = new String[doc.getFields().size()];
+                for (int i = 0; i < doc.getFields().size(); i++) {
+                    fields[i] = doc.getFields().get(i).name();
+                }
+            }
+
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < fields.length; i++) {
+                stringBuilder.append(fields[i])
+                        .append(":")
+                        .append(query)
+                        .append("*");
+
+                if (i != fields.length - 1) {
+                    stringBuilder.append(" OR ");
+                }
+            }
+
+            return this.searchDocumentWithLQL(stringBuilder.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (indexReader != null)
+                indexReader.close();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> searchDocumentWithLQL(String lql, int count, Sort sort, Boolean likeoperator, Boolean pagination) throws IOException {
+        return searchDocumentWithLQL(lql, count, sort, likeoperator, null, null, null, null, pagination);
+    }
+
+    @Override
+    public Map<String, Object> searchDocumentWithLQL(String lql, int count, Sort sort, Boolean likeoperator, String sortfields, String[] selectedFields
+            , Boolean sortorder, Integer pageno, Boolean pagination) throws IOException {
+
+        IndexReader indexReader = null;
+        SortField[] sortFields = null;
+        try {
+            String[] arraysortfields = (sortfields != null && !sortfields.isEmpty()) ? sortfields.split(",") : null;
+            Set<String> selectedFieldsLucene = (selectedFields != null && selectedFields.length > 0) ? new HashSet<>(Arrays.asList(selectedFields)) : null;
+            if (arraysortfields != null)
+                sortFields = new SortField[arraysortfields.length];
+            indexReader = indexReader();
+            List<Document> documents = new ArrayList<>();
+            Map<String, Object> result = new HashMap<>();
+            TopDocs topDocs = null;
+            if (indexReader.maxDoc() > 0) {
+                Analyzer analyzer = buildAnalyzer(indexReader, likeoperator);    //StandardAnalyzer analyzer = new StandardAnalyzer();
+                QueryParser queryParser = new QueryParser("", analyzer);
+                queryParser.setAllowLeadingWildcard(true);
+                IndexSearcher searcher = new IndexSearcher(indexReader);
+
+                if (arraysortfields != null) {
+
+                    int j = 0;
+                    Document doc = indexReader.document(0);
+                    for (String sortfield : arraysortfields) {
+                        for (int i = 0; i < doc.getFields().size(); i++) {
+                            if (doc.getFields().get(i).name().equalsIgnoreCase(sortfield)) {
+                                if (sortfield.endsWith(INDEXER_ALIAS_COLUMN_NAME_INT)
+                                        || sortfield.endsWith(INDEXER_ALIAS_COLUMN_NAME_SK)
+                                )
+                                    sortFields[j++] = new SortedNumericSortField(sortfield, SortField.Type.INT, sortorder);
+                                else if (sortfield.endsWith(INDEXER_ALIAS_COLUMN_NAME_ON))
+                                    sortFields[j++] = new SortedNumericSortField(sortfield, SortField.Type.LONG, sortorder);
+                                else
+                                    sortFields[j++] = new SortField(sortfield, SortField.Type.STRING, sortorder);
+                            }
+                        }
+                    }
+                    sort = new Sort(sortFields);
+                } else {
+                    sort = null;
+                }
+                int noOfRecords = count == 0 ? indexReader.numDocs() : count;
+                noOfRecords = noOfRecords < SFInterfaceConstants.getEndpointResultsCount() ? noOfRecords : SFInterfaceConstants.getEndpointResultsCount();
+                lql = (lql == null || lql.isEmpty()) ? "*:*" : lql;
+                if (sort == null)
+                    topDocs = searcher.search(queryParser.parse(lql), indexReader.numDocs());
+                else
+                    topDocs = searcher.search(queryParser.parse(lql), indexReader.numDocs(), sort);
+
+                /*pagination starts*/
+                ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+                int pageIndex = (pageno != null && pageno >= 1) ? pageno : SFInterfaceConstants.ENDPOINT_DEFAULT_PAGENO;
+                int pageSize = noOfRecords;
+
+                int startIndex = (pageIndex - 1) * pageSize;
+                int endIndex = pageIndex * pageSize;
+                endIndex = topDocs.totalHits < endIndex ? topDocs.totalHits : endIndex;
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    documents.add(searcher.doc(scoreDocs[i].doc, selectedFieldsLucene));
+                }
+                if (pagination != null && pagination) {
+                    result.put(TOTAL_COUNT, topDocs.totalHits);
+                }
+            }
+            /* pagination ends */
+            result.put(DOCUMENT, documents);
+            //System.out.println("Number of hits : " + documents.size());
+            return result;
+        } catch (
+                Exception e) {
+            e.printStackTrace();
+            List<Document> errordocument = new ArrayList<>();
+            Document doc = new Document();
+            doc.add(new StringField(ERROR, e.getMessage(), Field.Store.YES));
+            Map<String, Object> errorMap = new HashMap<>();
+            errordocument.add(doc);
+            errorMap.put("Document", errordocument);
+            return (Map<String, Object>) errorMap;
+        } finally {
+            indexReader.close();
+        }
+
+    }
+
+    @Override
+    public List<Document> searchDocumentWithLQL(String lql, int count, Sort sort) throws IOException {
+        return (List<Document>) searchDocumentWithLQL(lql, count, sort, false, null);
+    }
+
+    public List<Document> searchDocumentWithLQL(String lql) throws IOException {
+        return searchDocumentWithLQL(lql, 0);
+    }
+
+    @Override
+    public List<Document> searchDocumentWithLQL(String lql, int count) throws IOException {
+        IndexReader indexReader = null;
+        try {
+            indexReader = indexReader();
+            Analyzer analyzer = buildAnalyzer(indexReader);
+            QueryParser queryParser = new QueryParser("", analyzer);
+
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+            List<Document> documents = new ArrayList<>();
+
+            int noOfRecords = count == 0 ? indexReader.numDocs() : count;
+
+            TopDocs topDocs = searcher.search(queryParser.parse(lql), noOfRecords);
+            ScoreDoc[] hits = topDocs.scoreDocs;
+
+            for (int i = 0; i < hits.length; ++i) {
+                int docId = hits[i].doc;
+                documents.add(searcher.doc(docId));
+            }
+
+            indexReader.close();
+            System.out.println(documents.size());
+            return documents;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Document> searchDocumentWithLQL(String lql, String[] requiredColumns) throws IOException {
+        return null;
+    }
+
+    public Analyzer buildAnalyzer(IndexReader index, Boolean simpleanalyzer) throws Exception {
+        Map<String, Analyzer> analyzerPerField = index.document(0).getFields()
+                .stream()
+                .filter(field -> field.fieldType().indexOptions().name().equalsIgnoreCase("DOCS"))
+                .collect(Collectors.toMap(field -> field.name(), field -> new KeywordAnalyzer(), (existing, replacement) -> existing));
+        return new PerFieldAnalyzerWrapper(new CustomAnalyzer(), analyzerPerField);
+
+    }
+
+    public Analyzer buildAnalyzer(IndexReader index) throws Exception {
+        Map<String, Analyzer> analyzerPerField =
+                index.document(0).getFields()
+                        .stream()
+                        .filter(field -> field.fieldType().indexOptions().name().equalsIgnoreCase("DOCS"))
+                        .collect(Collectors.toMap(field -> field.name(), field -> new KeywordAnalyzer()));
+        return new PerFieldAnalyzerWrapper(new CustomAnalyzer(), analyzerPerField);
+    }
+
+
+}

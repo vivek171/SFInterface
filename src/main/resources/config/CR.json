@@ -1,0 +1,8 @@
+{
+  "Assigned": "#cfd1d9",
+  "Rejected": "#fe6868",
+  "Canceled": "#fe6868",
+  "InProgress": "#ffeb3b",
+  "Completed": "#addc62",
+  "Approved": "#addc62"
+}

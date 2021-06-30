@@ -1,0 +1,4 @@
+package com.htc.remedy.model;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+

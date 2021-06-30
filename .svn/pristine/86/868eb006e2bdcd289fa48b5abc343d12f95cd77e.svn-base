@@ -1,0 +1,135 @@
+/*!
+ * Start Bootstrap - SB Admin 2 v3.3.7+1 (http://startbootstrap.com/template-overviews/sb-admin-2)
+ * Copyright 2013-2016 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+ */
+
+.dsh-content-wrapper {
+	background: #0ea3c4;
+	border-radius: 10px;
+	margin-bottom: 20px;
+	margin-right: -10px;
+	overflow: hidden;
+	position: relative;
+}
+.dsh-content-wrapper li.noaccess {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    left: 50%;
+    white-space: nowrap;
+    color: #e87352;
+}
+
+.dsh-content-inner-wrapper {
+	display: table;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	overflow-y: auto;
+}
+
+.dsh-content {
+	display: table-cell;
+	vertical-align: middle;
+	color: #ffffff;
+	font-weight: normal;
+	cursor: pointer;
+	/*display: none;*/
+}
+
+.dsh-inner-content {
+	display: none;
+	vertical-align: top;
+	color: #ffffff;
+	padding: 15px 20px;
+	text-align: left;
+	overflow: hidden;
+}
+
+.dsh-inner-content ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.dsh-inner-content li a {
+	margin: 0;
+	padding: 5px 0px;
+	list-style: none;
+	color: #738594;
+	border-bottom: 1px solid #738594;
+	text-decoration: none;
+	display: block;
+}
+
+.dsh-inner-content li a:hover {
+	color: #ffffff;
+	border-bottom: 1px solid #ffffff;
+}
+
+.dsh-icon {
+	background: rgba(255, 255, 255, 0.5);
+	padding: 10px;
+	border-radius: 50%;
+	width: 110px;
+	height: 110px;
+	display: inline-block;
+	margin-bottom: 15px;
+	overflow: hidden;
+}
+
+.dsh-icon-red {
+	background: #CC6666;
+}
+
+.dsh-icon-yellow {
+	background: #CC9933;
+}
+
+.dsh-icon-cyan {
+	background: #66B5D5;
+}
+
+.dsh-icon-green {
+	background: #5FCE9B;
+}
+
+.dsh-icon-orange {
+	background: #E87352;
+}
+
+.dsh-icon-blue {
+	background: #5092E0;
+}
+
+.dsh-icon-darkgreen {
+	background: #09A90F;
+}
+
+.dsh-icon-pink {
+	background: #FF4A66;
+}
+.dsh-icon-pekgreen {
+    background: rgba(102, 199, 204, 0.64);
+}
+
+.dsh-icon-Sdmetrics {
+    background: rgba(204, 102, 116, 0.75);
+}
+.dsh-icon-lms{
+	background: #816854;
+}
+
+.dsh-title,.dsh-title-inner {
+	font-family: 'Roboto-Thin', sans-serif;
+	font-size: 32px;
+	display: block;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.dsh-title-inner img {
+	width: 70px;
+	vertical-align: middle;
+}

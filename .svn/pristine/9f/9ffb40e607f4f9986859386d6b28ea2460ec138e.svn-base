@@ -1,0 +1,46 @@
+Configuration:
+  name: Default
+  Properties:
+    Property:
+      name: log-path
+      value: "logs"
+  Appenders:
+    Console:
+      name: LogToConsole
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+    RollingFile:
+      - name: LogToRollingFile
+        fileName: logs/SFInterface.log
+        filePattern: "logs/$${date:yyyy-MM}/SFInterface-%d{MM-dd-yyyy}-%i.log.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 50MB
+        DefaultRollOverStrategy:
+          max: 30
+
+      - name: LogToRollingErrorFile
+        fileName: logs/SFInterfaceError.log
+        filePattern: "logs/$${date:yyyy-MM}/SFInterfaceError-%d{MM-dd-yyyy}-%i.log.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 50MB
+        DefaultRollOverStrategy:
+          max: 30
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+#        - ref: LogToConsole
+        - ref: LogToRollingFile
+    Logger:
+      - name: com.htc.remedy
+        level: info
+        AppenderRef:
+          - ref: LogToRollingErrorFile
+            level: error
