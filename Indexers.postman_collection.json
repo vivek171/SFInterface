@@ -1,0 +1,247 @@
+{
+	"info": {
+		"_postman_id": "bb433712-9b21-4ff7-8736-2f74980011de",
+		"name": "Indexers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Indexer",
+			"item": [
+				{
+					"name": "CreateIndexer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ClientInstance",
+								"value": "shared",
+								"type": "text"
+							},
+							{
+								"key": "atoken",
+								"value": "{{DTOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/whoosh/CreateIndexer?Sync=true&indexerName=AccountGroups",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"whoosh",
+								"CreateIndexer"
+							],
+							"query": [
+								{
+									"key": "indexerName",
+									"value": "AccountsByStatus",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "SecureAnswers",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "Location",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "ListOfValues",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "Location",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "UserGroups",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "ListOfValues",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "UserGroups",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "AccountsByStatus",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "Approvers",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "AssignedGroups",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "TaskApprover",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "ApplicationAccess",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "OnCall",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "KBPhrases",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "Status",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "CTI",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "Incident",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "KBPhrases",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "UserGroups",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "WizardItems",
+									"disabled": true
+								},
+								{
+									"key": "indexerName",
+									"value": "UserPreference",
+									"disabled": true
+								},
+								{
+									"key": "Sync",
+									"value": "true"
+								},
+								{
+									"key": "indexerName",
+									"value": "AccountGroups"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateIndexers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ClientInstance",
+								"value": "bmth",
+								"type": "text"
+							},
+							{
+								"key": "atoken",
+								"value": "{{DTOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/whoosh/CreateAllIndexers?Sync=True",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"whoosh",
+								"CreateAllIndexers"
+							],
+							"query": [
+								{
+									"key": "Sync",
+									"value": "True"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateIndexer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "ClientInstance",
+								"value": "bmth",
+								"type": "text"
+							},
+							{
+								"key": "atoken",
+								"value": "{{DTOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/whoosh/UpdateIndexer?ticketID=SR-000004539812&indexerName=ServiceRequest",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"whoosh",
+								"UpdateIndexer"
+							],
+							"query": [
+								{
+									"key": "ticketID",
+									"value": "INC-HFM000000022",
+									"disabled": true
+								},
+								{
+									"key": "Sync",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "ticketID",
+									"value": "SR-000004539812"
+								},
+								{
+									"key": "indexerName",
+									"value": "ServiceRequest"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
